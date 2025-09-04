@@ -9,7 +9,7 @@
   <!-- React 18 (CDN) -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <!-- Babel for inline JSX (CDN) -->
+  <!-- Babel for inline JSX -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body class="bg-white text-gray-900">
@@ -18,102 +18,50 @@
   <script type="text/babel" data-presets="react">
     const { useState, useEffect } = React;
 
-    const App = () => {
+    function App() {
       const [currentPage, setCurrentPage] = useState("home");
       const [formData, setFormData] = useState({});
       const [formErrors, setFormErrors] = useState({});
       const [submitStatus, setSubmitStatus] = useState(null);
       const [menuFile, setMenuFile] = useState(null);
 
-      // --- NAV / HASH SUPPORT ---
-      const navigateTo = (page) => {
-        setCurrentPage(page);
-        // also set hash for partners so QR / links work
-        if (page === 'restaurant-partners') {
-          history.replaceState(null, '', '#restaurant-partners');
-          setTimeout(() => {
-            const el = document.getElementById('restaurant-partners');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }, 0);
-        } else {
-          history.replaceState(null, '', ' ');
-          window.scrollTo(0, 0);
-        }
-      };
-
-      // Jump to partners if URL has #restaurant-partners on first load
-      useEffect(() => {
-        if (window.location.hash === '#restaurant-partners') {
-          setCurrentPage('restaurant-partners');
-          setTimeout(() => {
-            const el = document.getElementById('restaurant-partners');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }, 0);
-        }
-      }, []);
-
-      // --- FORMS ---
+      const navigateTo = (page) => { setCurrentPage(page); window.scrollTo(0,0); };
       const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
       };
+      const handleFileChange = (e) => setMenuFile(e.target.files[0]);
 
-      const handleFileChange = (e) => { setMenuFile(e.target.files[0]); };
-
+      // ----- VALIDATION (partner form) -----
       const validateForm = () => {
-  const errors = {};
-  const required = [
-    'restaurantName','contactName','phone','email',
-    'fiveDayCommit','dailyCapacity','packaging','foodSafetyStatus','payoutTarget',
-    'menu' // now required
-  ];
+        const errors = {};
+        const required = [
+          'restaurantName','contactName','phone','email','fiveDayCommit',
+          'dailyCapacity','packaging','foodSafetyStatus','payoutTarget'
+        ];
+        required.forEach(f => {
+          if (!formData[f] || (typeof formData[f] === 'string' && formData[f].trim() === '')) {
+            errors[f] = 'This field is required';
+          }
+        });
+        if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) errors.email = 'Enter a valid email';
+        if (formData.phone && !/^\d{10}$|^\d{3}-\d{3}-\d{4}$/.test(String(formData.phone).replace(/\D/g,''))) errors.phone = 'Enter a valid phone number';
+        setFormErrors(errors);
+        return Object.keys(errors).length === 0;
+      };
 
-  required.forEach(f => {
-    if (!formData[f] || (typeof formData[f] === 'string' && formData[f].trim() === '')) {
-      errors[f] = 'This field is required';
-    }
-  });
-
-  if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
-    errors.email = 'Please enter a valid email';
-  }
-
-  if (formData.phone && !/^\d{10}$|^\d{3}-\d{3}-\d{4}$/.test(String(formData.phone).replace(/\D/g,''))) {
-    errors.phone = 'Please enter a valid phone number';
-  }
-
-  // Optional client checks for the file
-  if (menuFile && menuFile.size > 10 * 1024 * 1024) {
-    errors.menuFile = 'File is too large (max 10MB).';
-  } else if (menuFile) {
-    const ok = ['pdf','jpg','jpeg','png','txt','doc','docx'];
-    const ext = (menuFile.name.split('.').pop() || '').toLowerCase();
-    if (!ok.includes(ext)) {
-      errors.menuFile = 'Unsupported file type.';
-    }
-  }
-
-  setFormErrors(errors);
-  return Object.keys(errors).length === 0;
-};
-
-      // Formspree — Restaurant Partner form
-      const handleSubmitPartnerForm = async (e) => {
+      // ----- SUBMIT: PARTNER (Formspree) -----
+      async function handleSubmitPartnerForm(e) {
         e.preventDefault();
         if (!validateForm()) return;
 
         const formEl = e.target;
-        // honeypot check (field is in the form markup)
+        // Abort if honeypot was filled (bot)
         if (formEl.querySelector('input[name="_gotcha"]')?.value) return;
 
         const data = new FormData(formEl);
-        data.append("_subject", `Restaurant Application — ${formData.restaurantName || ""}`);
-// include file if present
-if (menuFile) {
-  data.append('menuFile', menuFile);
-  data.append('_file_meta', `${menuFile.name} • ${(menuFile.size/1024/1024).toFixed(2)}MB`);
-}
-
+        if (menuFile) data.append('menuFile', menuFile);
+        data.append('_subject', `Restaurant Application — ${formData.restaurantName || ''}`);
 
         try {
           const res = await fetch("https://formspree.io/f/myzdnvay", {
@@ -121,36 +69,31 @@ if (menuFile) {
             body: data,
             headers: { "Accept": "application/json" }
           });
-
           if (res.ok) {
             setSubmitStatus({ success: true, message: "Thanks — we’ll review and contact you within 1 business day." });
-            formEl.reset();
-            setFormData({});
-            setMenuFile(null);
+            formEl.reset(); setFormData({}); setMenuFile(null);
           } else {
             setSubmitStatus({ success: false, message: "Submission failed. Please try again." });
           }
         } catch {
           setSubmitStatus({ success: false, message: "Network error. Please try again." });
         }
-      };
+      }
 
-      // Formspree — General Contact form
-      const handleSubmitContactForm = async (e) => {
+      // ----- SUBMIT: CONTACT (Formspree) -----
+      async function handleSubmitContactForm(e) {
         e.preventDefault();
         const formEl = e.target;
         if (formEl.querySelector('input[name="_gotcha"]')?.value) return;
 
         const data = new FormData(formEl);
-        data.append("_subject", "Website Contact");
-
+        data.append('_subject', 'Website Contact');
         try {
           const res = await fetch("https://formspree.io/f/meolrwqq", {
             method: "POST",
             body: data,
             headers: { "Accept": "application/json" }
           });
-
           if (res.ok) {
             setSubmitStatus({ success: true, message: "Thank you for your message. We will respond shortly." });
             formEl.reset();
@@ -160,45 +103,31 @@ if (menuFile) {
         } catch {
           setSubmitStatus({ success: false, message: "Network error. Please try again." });
         }
-      };
+      }
 
-      // Auto-clear toast
       useEffect(() => {
         if (!submitStatus) return;
         const t = setTimeout(() => setSubmitStatus(null), 5000);
         return () => clearTimeout(t);
       }, [submitStatus]);
 
-      // --- UI ---
+      // ----- UI components -----
       const Navigation = () => (
         <nav className="bg-white shadow-sm sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">FuelUp Concepts Ltd.</h1>
-              </div>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-8">
-                  {[
-                    { name: 'Home', path: 'home' },
-                    { name: 'Food', path: 'food' },
-                    { name: 'Tech', path: 'tech' },
-                    { name: 'Events', path: 'events' },
-                    { name: 'About', path: 'about' },
-                    { name: 'Contact', path: 'contact' }
-                  ].map((item) => (
-                    <button key={item.path}
-                      onClick={() => navigateTo(item.path)}
-                      className={`${currentPage === item.path ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-600'} px-3 py-2 text-sm font-medium transition-colors duration-200`}>
-                      {item.name}
-                    </button>
-                  ))}
-                  <button
-                    onClick={() => navigateTo('restaurant-partners')}
-                    className={`${currentPage === 'restaurant-partners' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-600'} px-3 py-2 text-sm font-medium transition-colors duration-200`}>
-                    Restaurant Partners
+              <h1 className="text-xl font-bold">FuelUp Concepts Ltd.</h1>
+              <div className="hidden md:flex gap-6">
+                {[
+                  ['Home','home'],['Food','food'],['Tech','tech'],
+                  ['Events','events'],['About','about'],['Contact','contact']
+                ].map(([label, path]) => (
+                  <button key={path}
+                          onClick={() => navigateTo(path)}
+                          className={`${currentPage===path?'text-blue-600 border-b-2 border-blue-600':'text-gray-700 hover:text-blue-600'} px-2 py-2`}>
+                    {label}
                   </button>
-                </div>
+                ))}
               </div>
             </div>
           </div>
@@ -206,37 +135,28 @@ if (menuFile) {
       );
 
       const Footer = () => (
-        <footer className="bg-gray-50 border-t border-gray-200">
+        <footer className="bg-gray-50 border-t">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div className="md:col-span-2">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">FuelUp Concepts Ltd.</h3>
+                <h3 className="text-lg font-semibold mb-4">FuelUp Concepts Ltd.</h3>
                 <p className="text-gray-600 mb-4">Local service brands across Food, Tech & Events.</p>
                 <p className="text-sm text-gray-500">Kitimat, BC, Canada</p>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900 mb-4">Quick Links</h4>
-                <ul className="space-y-2">
-                  {['Home','Food','Tech','Events','About','Contact'].map((link) => (
-                    <li key={link}>
-                      <button
-                        onClick={() => navigateTo(link.toLowerCase())}
-                        className="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">
-                        {link}
+                <h4 className="font-semibold mb-4">Quick Links</h4>
+                <ul className="space-y-2 text-sm">
+                  {['home','food','tech','events','about','contact'].map(p => (
+                    <li key={p}>
+                      <button onClick={() => navigateTo(p)} className="text-gray-600 hover:text-blue-600 capitalize">
+                        {p.replace('-',' ')}
                       </button>
                     </li>
                   ))}
-                  <li>
-                    <button
-                      onClick={() => navigateTo('restaurant-partners')}
-                      className="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">
-                      Restaurant Partners
-                    </button>
-                  </li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-gray-900 mb-4">Contact</h4>
+                <h4 className="font-semibold mb-4">Contact</h4>
                 <div className="space-y-2 text-sm text-gray-600">
                   <p>hello@fuelupconcepts.ca</p>
                   <p>partnerships@fuelupconcepts.ca</p>
@@ -244,120 +164,33 @@ if (menuFile) {
                 </div>
               </div>
             </div>
-            <div className="border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500">
-              <p>&copy; {new Date().getFullYear()} FuelUp Concepts Ltd. All rights reserved.</p>
+            <div className="border-t mt-8 pt-6 text-center text-sm text-gray-500">
+              &copy; {new Date().getFullYear()} FuelUp Concepts Ltd.
             </div>
           </div>
         </footer>
       );
 
-      const StatusMessage = () => {
-        if (!submitStatus) return null;
-        return (
-          <div className={`fixed top-4 right-4 max-w-md w-full p-4 rounded-lg shadow-lg transition-all duration-300 transform ${submitStatus.success ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
-            <div className="flex items-start">
-              <div className="flex-shrink-0">
-                {submitStatus.success ? (
-                  <svg className="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                ) : (
-                  <svg className="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium">{submitStatus.message}</p>
-              </div>
-            </div>
+      const StatusMessage = () =>
+        submitStatus ? (
+          <div className={`fixed top-4 right-4 max-w-md w-full p-4 rounded-lg shadow-lg ${submitStatus.success?'bg-green-50 text-green-800':'bg-red-50 text-red-800'}`}>
+            <p className="text-sm font-medium">{submitStatus.message}</p>
           </div>
-        );
-      };
+        ) : null;
 
-      // --- PAGES ---
+      // ---- PAGES (Home shortened to keep focus) ----
       const HomePage = () => (
         <div className="min-h-screen">
-          <section className="bg-white py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Local service brands, built to scale.</h1>
-              <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">FuelUp Concepts Ltd. operates three verticals—Food, Tech, and Events—with a simple, reliable approach.</p>
+          <section className="bg-white py-20 text-center">
+            <div className="max-w-3xl mx-auto px-4">
+              <h1 className="text-5xl font-bold mb-6">Local service brands, built to scale.</h1>
+              <p className="text-xl text-gray-600 mb-8">
+                FuelUp operates three verticals — Food, Tech, and Events — with a simple, reliable approach.
+              </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onClick={() => navigateTo('food')} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">Explore Food</button>
-                <button onClick={() => navigateTo('food')} className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200">View All Verticals</button>
+                <button onClick={() => navigateTo('food')} className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">Explore Food</button>
+                <button onClick={() => navigateTo('restaurant-partners')} className="border px-8 py-3 rounded-lg">Restaurant Partners</button>
               </div>
-            </div>
-          </section>
-
-          <section id="verticals" className="bg-gray-50 py-20">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Our Verticals</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[
-                  { title: "Food — FuelUp Meals", description: "FuelUp Lunchboxes is live today. Future lines: Breakfast & Dinner." },
-                  { title: "Tech", description: "Practical SMB IT & cloud services (coming soon): helpdesk, email/workspace, networking, security basics." },
-                  { title: "Events", description: "Scalable event support—from retail launches and community days to corporate socials." }
-                ].map((v,i) => (
-                  <div key={i} className="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-4">{v.title}</h3>
-                    <p className="text-gray-600">{v.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="bg-blue-600 py-16">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <h2 className="text-3xl font-bold text-white mb-6">Restaurant? Partner with FuelUp Meals</h2>
-              <button onClick={() => navigateTo('restaurant-partners')} className="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors duration-200">Restaurant Partners (Lunchboxes)</button>
-            </div>
-          </section>
-
-          <section className="bg-white py-20">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Frequently Asked Questions</h2>
-              <div className="space-y-6">
-                {[
-                  { q: "Is this a consumer ordering site?", a: "No. This is business-facing. Consumer ordering for Lunchboxes lives under FuelUp Meals." },
-                  { q: "How do restaurant payouts work?", a: "Fixed per-box payout, reconciled monthly; no hidden fees." },
-                  { q: "Where do you operate?", a: "Kitimat, BC (initial market)." }
-                ].map((faq, i) => (
-                  <div key={i} className="border-b border-gray-200 pb-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{faq.q}</h3>
-                    <p className="text-gray-600">{faq.a}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          <section className="bg-gray-50 py-20">
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Get in Touch</h2>
-              <form onSubmit={handleSubmitContactForm} className="bg-white p-8 rounded-lg shadow-sm">
-                <!-- honeypot -->
-                <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
-                    <input type="text" name="name" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                    <input type="email" name="email" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
-                  </div>
-                </div>
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
-                  <input type="text" name="company" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
-                </div>
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
-                  <textarea name="message" rows="4" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                </div>
-                <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">Send Message</button>
-              </form>
             </div>
           </section>
         </div>
@@ -366,371 +199,158 @@ if (menuFile) {
       const FoodPage = () => (
         <div className="min-h-screen bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <h1 className="text-4xl font-bold text-gray-900 mb-8">Food</h1>
+            <h1 className="text-4xl font-bold mb-8">Food</h1>
             <div className="bg-gray-50 p-8 rounded-lg mb-12">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-4">FuelUp Meals (sub-vertical)</h2>
-              <p className="text-gray-600">Our customer brand family.</p>
-            </div>
-            <div className="mb-12">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">FuelUp Lunchboxes (live)</h2>
+              <h2 className="text-2xl font-semibold mb-4">FuelUp Lunchboxes (live)</h2>
               <p className="text-gray-600 mb-6">Pre-ordered, restaurant-cooked lunch boxes at fair, predictable pricing.</p>
-              <div className="bg-gray-50 p-6 rounded-lg mb-6">
-                <h3 className="font-semibold text-gray-900 mb-4">How it works</h3>
-                <ol className="list-decimal list-inside space-y-2 text-gray-600">
-                  <li>Pick a pass</li>
-                  <li>Choose the lunch the night before</li>
-                  <li>We deliver on schedule</li>
-                </ol>
-              </div>
-              <button onClick={() => navigateTo('restaurant-partners')} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">Restaurant Partners (Lunchboxes)</button>
-            </div>
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Coming next</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Breakfast</h3>
-                  <p className="text-gray-600">Placeholder for breakfast service details.</p>
-                </div>
-                <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">Dinner</h3>
-                  <p className="text-gray-600">Placeholder for dinner service details.</p>
-                </div>
-              </div>
-            </div>
-            <div className="mt-12 text-center">
-              <a href="#" className="text-blue-600 hover:text-blue-800 font-medium">Consumer site: FuelUp Meals</a>
+              <button onClick={() => navigateTo('restaurant-partners')} className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
+                Restaurant Partners (Lunchboxes)
+              </button>
             </div>
           </div>
         </div>
       );
 
+      // Restaurant Partners page WITH the new fields
       const RestaurantPartnersPage = () => (
-        <div id="restaurant-partners" className="min-h-screen bg-white">
-          <section className="py-20 bg-gradient-to-br from-blue-50 to-white">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div>
-                  <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">Steady Lunch Orders. No Delivery. No Marketing.</h1>
-                  <p className="text-lg text-gray-600 mb-8 leading-relaxed">We assign you standardized FuelUp Boxes based on your menu. You cook; we bring the orders and pick up on schedule.</p>
-                  <div className="flex flex-wrap gap-3 mb-8">
-                    {["Guaranteed Weekday Volume","Weekly Payouts","Clear SOPs","Local Support"].map((t,i)=>(
-                      <span key={i} className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">{t}</span>
-                    ))}
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <button onClick={() => document.getElementById('apply-form')?.scrollIntoView({ behavior: 'smooth' })} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">Apply to Partner</button>
-                    <button onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })} className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-200">How it Works</button>
-                  </div>
-                </div>
-                <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-6">Sample Numbers</h2>
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    {[{big:"20+",label:"Boxes / Day Min"},{big:"5",label:"Days / Week"},{big:"100+",label:"Boxes / Week"}].map((b,i)=>(
-                      <div key={i} className="text-center p-4 bg-gray-50 rounded-lg">
-                        <div className="text-3xl font-bold text-blue-600 mb-1">{b.big}</div>
-                        <div className="text-sm text-gray-600">{b.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-sm text-gray-500 text-center italic">*Rates finalized after menu review.</p>
-                </div>
-              </div>
+        <div className="min-h-screen bg-white">
+          <section className="py-16 bg-gradient-to-br from-blue-50 to-white">
+            <div className="max-w-6xl mx-auto px-4">
+              <h1 className="text-4xl font-bold mb-6">Steady Lunch Orders. No Delivery. No Marketing.</h1>
+              <p className="text-lg text-gray-600 mb-8">We assign you standardized FuelUp Boxes. You cook; we bring orders and pick up on schedule.</p>
             </div>
           </section>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-              <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6">What You Get</h2>
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  {[["Guaranteed Volume","Daily weekday orders."],["Zero Marketing","We handle demand."],["No Delivery","We do pickups."],["Weekly Payouts","Reliable cashflow."]].map(([h,p],i)=>(
-                    <div key={i} className="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
-                      <div className="font-semibold text-blue-800 mb-1">{h}</div>
-                      <div className="text-sm text-gray-600">{p}</div>
-                    </div>
-                  ))}
-                </div>
-                <h3 className="text-lg font-semibold text-blue-700 mb-3">Our Commitment</h3>
-                <ul className="text-gray-600 space-y-1">
-                  <li>• Clear pickup schedule + route</li>
-                  <li>• Minimum daily order guarantees</li>
-                  <li>• All customer service handled by us</li>
-                </ul>
-              </div>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+            <h2 className="text-3xl font-bold mb-8">Apply to Partner</h2>
 
-              <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6">What We Need</h2>
-                <h3 className="text-lg font-semibold text-blue-700 mb-3">Your Commitment</h3>
-                <ul className="text-gray-600 space-y-1 mb-6">
-                  <li>• Prepare assigned boxes Mon–Fri</li>
-                  <li>• Consistent portions & quality</li>
-                  <li>• Ready by agreed pickup times</li>
-                  <li>• Use acceptable packaging (single/dual compartment)</li>
-                </ul>
-                <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg text-sm">
-                  Example: Your "Butter Chicken" becomes <strong>FuelUp Box #4: Butter Chicken + Rice + Salad</strong>.
-                </div>
-              </div>
-            </div>
+            <form onSubmit={handleSubmitPartnerForm} className="bg-white p-8 rounded-xl shadow-sm border">
+              <!-- Honeypot for bots -->
+              <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
 
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-16" id="how-it-works">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">How It Works</h2>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                {[["1","Assign","We map your menu to 3–5 FuelUp Boxes."],["2","Prepare","Cook only when orders come in."],["3","Collect","FuelUp driver picks up on time."],["4","Pay","Weekly payouts per box."]].map(([n,t,d],i)=>(
-                  <div key={i} className="text-center p-6 border-2 border-dashed border-blue-200 rounded-lg">
-                    <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-3">{n}</div>
-                    <h3 className="font-bold text-gray-900 mb-2">{t}</h3>
-                    <p className="text-gray-600 text-sm">{d}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-gray-50 p-8 rounded-xl mb-16">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Standards & Expectations</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <h3 className="font-semibold text-blue-700 mb-3">Operational Requirements</h3>
-                  <ul className="text-gray-600 space-y-2">
-                    <li>• On-time prep windows</li>
-                    <li>• Consistent portion sizing</li>
-                    <li>• Quality control standards</li>
-                    <li>• Food-safety checklist compliance</li>
-                  </ul>
+                  <label className="block text-sm font-medium mb-2">Restaurant Name *</label>
+                  <input type="text" name="restaurantName" value={formData.restaurantName || ''} onChange={handleInputChange}
+                         className={`w-full px-4 py-2 border rounded-lg ${formErrors.restaurantName?'border-red-500':'border-gray-300'}`} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-blue-700 mb-3">Packaging</h3>
-                  <p className="text-gray-600">Start with your existing packaging (minimum standard). We'll provide branded FuelUp boxes as we scale.</p>
+                  <label className="block text-sm font-medium mb-2">Contact Person *</label>
+                  <input type="text" name="contactName" value={formData.contactName || ''} onChange={handleInputChange}
+                         className={`w-full px-4 py-2 border rounded-lg ${formErrors.contactName?'border-red-500':'border-gray-300'}`} />
                 </div>
               </div>
-            </div>
 
-            <div className="bg-gray-50 p-8 rounded-xl mb-16">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Payout Model</h2>
-              <p className="text-gray-600 mb-4">Fixed per-box payout; weekly payouts; no hidden fees.</p>
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <p className="text-sm text-gray-500">*Payout rates finalized after menu review and costing analysis.</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Phone *</label>
+                  <input type="tel" name="phone" value={formData.phone || ''} onChange={handleInputChange}
+                         className={`w-full px-4 py-2 border rounded-lg ${formErrors.phone?'border-red-500':'border-gray-300'}`} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Email *</label>
+                  <input type="email" name="email" value={formData.email || ''} onChange={handleInputChange}
+                         className={`w-full px-4 py-2 border rounded-lg ${formErrors.email?'border-red-500':'border-gray-300'}`} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Daily Lunch Capacity *</label>
+                  <input type="number" name="dailyCapacity" value={formData.dailyCapacity || ''} onChange={handleInputChange}
+                         className={`w-full px-4 py-2 border rounded-lg ${formErrors.dailyCapacity?'border-red-500':'border-gray-300'}`} />
+                </div>
               </div>
-            </div>
 
-            <div id="apply-form">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8">Apply to Partner</h2>
-              <form onSubmit={handleSubmitPartnerForm} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-                               {/* honeypot */}
-                <input type="text" name="_gotcha" style="display:none" tabIndex="-1" autoComplete="off" />
+              <!-- NEW: Menu / Dishes textarea -->
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">Menu / Dishes You Can Do (3–5 lunch boxes) *</label>
+                <textarea name="menu" rows="4" value={formData.menu || ''} onChange={handleInputChange}
+                          placeholder="List 3–5 dishes (e.g., Butter Chicken + Rice + Salad)"
+                          className={`w-full px-4 py-2 border rounded-lg ${formErrors.menu?'border-red-500':'border-gray-300'}`}></textarea>
+                {formErrors.menu && <p className="text-sm text-red-600 mt-1">{formErrors.menu}</p>}
+              </div>
 
-                {/* Existing minimal fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Restaurant Name *</label>
-                    <input
-                      type="text"
-                      name="restaurantName"
-                      value={formData.restaurantName || ''}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        formErrors.restaurantName ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    />
-                    {formErrors.restaurantName && (
-                      <p className="mt-1 text-sm text-red-600">{formErrors.restaurantName}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Contact Person *</label>
-                    <input
-                      type="text"
-                      name="contactName"
-                      value={formData.contactName || ''}
-                      onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                        formErrors.contactName ? 'border-red-500' : 'border-gray-300'
-                      }`}
-                    />
-                    {formErrors.contactName && (
-                      <p className="mt-1 text-sm text-red-600">{formErrors.contactName}</p>
-                    )}
-                  </div>
+              <!-- NEW: File upload -->
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">Upload Menu/Photos (Optional)</label>
+                <input type="file" name="menuFile" onChange={handleFileChange}
+                       accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx"
+                       className={`w-full px-4 py-2 border rounded-lg ${formErrors.menuFile?'border-red-500':'border-gray-300'}`} />
+                <p className="text-sm text-gray-500 mt-1">Accepted: PDF, JPG, PNG, TXT, DOC, DOCX (max 10MB)</p>
+                {menuFile && <p className="text-sm text-green-600 mt-1">Selected: {menuFile.name}</p>}
+              </div>
+
+              <!-- Minimal required selects to satisfy validation -->
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div>
+                  <label className="block text-sm font-medium mb-2">5-Day Commit *</label>
+                  <select name="fiveDayCommit" value={formData.fiveDayCommit || ''} onChange={handleInputChange}
+                          className={`w-full px-4 py-2 border rounded-lg ${formErrors.fiveDayCommit?'border-red-500':'border-gray-300'}`}>
+                    <option value="">Select…</option>
+                    <option value="Yes">Yes</option><option value="No">No</option>
+                  </select>
                 </div>
-
-                {/* >>> NEW BLOCK 1: Menu textarea (REQUIRED) */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Menu / Dishes You Can Do (3–5 lunch boxes) *
-                  </label>
-                  <textarea
-                    name="menu"
-                    value={formData.menu || ''}
-                    onChange={handleInputChange}
-                    rows="4"
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      formErrors.menu ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="List 3–5 dishes suited for weekday lunch (e.g., Butter Chicken + Rice + Salad)"
-                  ></textarea>
-                  {formErrors.menu && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.menu}</p>
-                  )}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Packaging *</label>
+                  <select name="packaging" value={formData.packaging || ''} onChange={handleInputChange}
+                          className={`w-full px-4 py-2 border rounded-lg ${formErrors.packaging?'border-red-500':'border-gray-300'}`}>
+                    <option value="">Select…</option>
+                    <option value="Single compartment">Single compartment</option>
+                    <option value="Dual compartment">Dual compartment</option>
+                  </select>
                 </div>
-
-                {/* >>> NEW BLOCK 2: Optional file upload */}
-                <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Upload Menu/Photos (Optional)
-                  </label>
-                  <input
-                    type="file"
-                    name="menuFile"
-                    onChange={handleFileChange}
-                    accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx"
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                      formErrors.menuFile ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                  />
-                  <p className="mt-1 text-sm text-gray-500">
-                    Accepted formats: PDF, JPG, PNG, TXT, DOC, DOCX (max 10MB)
-                  </p>
-                  {formErrors.menuFile && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.menuFile}</p>
-                  )}
-                  {menuFile && (
-                    <p className="mt-1 text-sm text-green-600">
-                      Selected: {menuFile.name} ({(menuFile.size / 1024 / 1024).toFixed(2)}MB)
-                    </p>
-                  )}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Food Safety Status *</label>
+                  <select name="foodSafetyStatus" value={formData.foodSafetyStatus || ''} onChange={handleInputChange}
+                          className={`w-full px-4 py-2 border rounded-lg ${formErrors.foodSafetyStatus?'border-red-500':'border-gray-300'}`}>
+                    <option value="">Select…</option>
+                    <option value="Certified">Certified</option>
+                    <option value="In progress">In progress</option>
+                  </select>
                 </div>
+              </div>
 
-                {/* Submit */}
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200"
-                >
-                  Send Application
-                </button>
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">Payout Target (CAD/box) *</label>
+                <input type="number" name="payoutTarget" step="0.01" value={formData.payoutTarget || ''} onChange={handleInputChange}
+                       className={`w-full px-4 py-2 border rounded-lg ${formErrors.payoutTarget?'border-red-500':'border-gray-300'}`} />
+              </div>
 
-              <form onSubmit={handleSubmitContactForm} className="bg-white p-8 rounded-lg shadow-sm max-w-md">
-                <!-- honeypot -->
-                <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-                <div className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
-                    <input type="text" name="name" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                    <input type="email" name="email" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
-                    <input type="text" name="company" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus-border-transparent"/>
-                  </div>
-                  <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 w-full">Get Updates</button>
-                </div>
-              </form>
-            </div>
+              <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
+                Send Application
+              </button>
+            </form>
           </div>
         </div>
       );
 
-      const EventsPage = () => (
-        <div className="min-h-screen bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <h1 className="text-4xl font-bold text-gray-900 mb-8">Events</h1>
-            <div className="mb-12">
-              <p className="text-xl text-gray-600 mb-8">Scalable event support for retailers, venues, and corporate teams.</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {["Retail launches","Community days","Corporate socials","Brand activations"].map((s,i)=>(
-                  <div key={i} className="bg-gray-50 p-6 rounded-lg text-center">
-                    <h3 className="font-semibold text-gray-900">{s}</h3>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="mb-12">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Portfolio</h2>
-              <div className="bg-gray-50 p-12 rounded-lg text-center">
-                <p className="text-gray-600">First case study coming soon.</p>
-              </div>
-            </div>
-            <div className="text-center">
-              <button onClick={() => navigateTo('contact')} className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">Inquire About Services</button>
-            </div>
-          </div>
-        </div>
-      );
-
-      const AboutPage = () => (
-        <div className="min-h-screen bg-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <h1 className="text-4xl font-bold text-gray-900 mb-8">About</h1>
-            <div className="bg-gray-50 p-8 rounded-lg mb-12">
-              <p className="text-lg text-gray-600 leading-relaxed">FuelUp Concepts Ltd. builds and runs local service brands across Food, Tech, and Events. We standardize operations, prove unit economics, and scale only what works.</p>
-            </div>
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Our Values</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {["Clarity","Reliability","Local accountability"].map((v,i)=>(
-                  <div key={i} className="bg-gray-50 p-6 rounded-lg">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{v}</h3>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+      const TechPage = () => (<div className="min-h-screen p-20">Tech — coming soon.</div>);
+      const EventsPage = () => (<div className="min-h-screen p-20">Events — coming soon.</div>);
+      const AboutPage = () => (<div className="min-h-screen p-20">About FuelUp.</div>);
 
       const ContactPage = () => (
         <div className="min-h-screen bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <h1 className="text-4xl font-bold text-gray-900 mb-8">Contact</h1>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              <div>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6">Send us a message</h2>
-                <form onSubmit={handleSubmitContactForm} className="bg-white p-8 rounded-lg shadow-sm">
-                  <!-- honeypot -->
-                  <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
-                      <input type="text" name="name" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                      <input type="email" name="email" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
-                    </div>
-                  </div>
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
-                    <input type="text" name="company" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
-                  </div>
-                  <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
-                    <textarea name="message" rows="6" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                  </div>
-                  <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">Send Message</button>
-                </form>
+            <h1 className="text-4xl font-bold mb-8">Contact</h1>
+            <form onSubmit={handleSubmitContactForm} className="bg-white p-8 rounded-lg shadow-sm border max-w-xl">
+              <input type="text" name="_gotcha" style={{display:'none'}} tabIndex="-1" autoComplete="off" />
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Name *</label>
+                <input type="text" name="name" required className="w-full px-4 py-2 border rounded-lg" />
               </div>
-              <div>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-6">Contact Information</h2>
-                <div className="bg-gray-50 p-8 rounded-lg">
-                  <h3 className="font-semibold text-gray-900 mb-4">Email</h3>
-                  <div className="space-y-3">
-                    <div><p className="text-sm font-medium text-gray-700">General Inquiries</p><p className="text-blue-600">hello@fuelupconcepts.ca</p></div>
-                    <div><p className="text-sm font-medium text-gray-700">Partnerships</p><p className="text-blue-600">partnerships@fuelupconcepts.ca</p></div>
-                    <div><p className="text-sm font-medium text-gray-700">Bookings</p><p className="text-blue-600">bookings@fuelupconcepts.ca</p></div>
-                  </div>
-                  <div className="mt-8 pt-6 border-t border-gray-200">
-                    <p className="text-sm text-gray-600">Kitimat, BC, Canada</p>
-                  </div>
-                </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">Email *</label>
+                <input type="email" name="email" required className="w-full px-4 py-2 border rounded-lg" />
               </div>
-            </div>
+              <div className="mb-6">
+                <label className="block text-sm font-medium mb-2">Message *</label>
+                <textarea name="message" rows="5" required className="w-full px-4 py-2 border rounded-lg"></textarea>
+              </div>
+              <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">Send Message</button>
+            </form>
           </div>
         </div>
       );
 
-      const renderPage = () => {
+      function Page() {
         switch (currentPage) {
           case 'food': return <FoodPage />;
           case 'restaurant-partners': return <RestaurantPartnersPage />;
@@ -740,17 +360,17 @@ if (menuFile) {
           case 'contact': return <ContactPage />;
           default: return <HomePage />;
         }
-      };
+      }
 
       return (
         <div className="font-sans">
           <Navigation />
           <StatusMessage />
-          {renderPage()}
+          <Page />
           <Footer />
         </div>
       );
-    };
+    }
 
     ReactDOM.createRoot(document.getElementById('root')).render(<App />);
   </script>
