@@ -146,49 +146,137 @@
   </section>
 
   <!-- FOOD -->
-  <section id="food" class="min-h-screen hidden-section">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-      <h2 class="text-4xl font-bold text-gray-900 mb-8">Food</h2>
-      <div class="bg-gray-50 p-8 rounded-lg mb-12">
-        <h3 class="text-2xl font-semibold text-gray-900 mb-4">FuelUp Meals (sub-vertical)</h3>
-        <p class="text-gray-600">Our customer brand family.</p>
+ <section id="food" class="py-16 md:py-20" style="background-color:#fffdfa">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Eyebrow + Title -->
+    <div class="max-w-3xl mb-10">
+      <div class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-[11px] font-semibold border border-gray-200 shadow-sm">
+        <span class="inline-block h-2 w-2 rounded-full bg-red-600"></span>
+        FuelUp · Food
       </div>
-      <div class="mb-12">
-        <h3 class="text-2xl font-semibold text-gray-900 mb-6">FuelUp Lunchboxes (live)</h3>
-        <p class="text-gray-600 mb-6">Pre-ordered, restaurant-cooked lunch boxes at fair, predictable pricing.</p>
-        <div class="bg-gray-50 p-6 rounded-lg mb-6">
-          <h4 class="font-semibold text-gray-900 mb-4">How it works</h4>
-          <ol class="list-decimal list-inside space-y-2 text-gray-600">
-            <li>Pick a pass</li>
-            <li>Choose the lunch the night before</li>
-            <li>We deliver on schedule</li>
-          </ol>
-        </div>
-       <button data-nav="restaurant-partners"
-        class="px-8 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
-        style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-  Restaurant Partners (Lunchboxes)
-</button>
-      </div>
-      <div>
-        <h3 class="text-2xl font-semibold text-gray-900 mb-6">Coming next</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-gray-50 p-6 rounded-lg">
-            <h4 class="text-xl font-semibold text-gray-900 mb-2">Breakfast</h4>
-            <p class="text-gray-600">Placeholder for breakfast service details.</p>
+      <h2 class="mt-4 text-3xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-[1.1]">
+        Food brands under <span class="text-red-600">FuelUp Concepts Ltd.</span>
+      </h2>
+      <p class="mt-4 text-gray-700 text-base md:text-lg">
+        We operate consumer and partner-facing food services with disciplined SOPs, predictable payouts,
+        and standardized quality. Simple, reliable, local.
+      </p>
+    </div>
+
+    <!-- Three premium tiles -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+
+      <!-- FuelUp Lunchboxes (consumer) -->
+      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition">
+        <div class="p-6">
+          <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
+            Customer App
           </div>
-          <div class="bg-gray-50 p-6 rounded-lg">
-            <h4 class="text-xl font-semibold text-gray-900 mb-2">Dinner</h4>
-            <p class="text-gray-600">Placeholder for dinner service details.</p>
+          <h3 class="text-xl font-extrabold text-gray-900">FuelUp Lunchboxes</h3>
+          <p class="mt-2 text-gray-700 text-sm">
+            Pre-sold weekday lunch plans (3, 5, 10, 22). FuelUp-standard boxes, kitimat-focused delivery.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Guaranteed delivery window</span>
+            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Pass-based</span>
           </div>
         </div>
+        <div class="px-6 pb-6">
+          <a href="#" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+             style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+            View Customer Site
+          </a>
+        </div>
       </div>
-      <div class="mt-12 text-center">
-        <span class="text-blue-600 font-medium">Consumer site: FuelUp Meals</span>
+
+      <!-- Restaurant Partners (onboarding) -->
+      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition">
+        <div class="p-6">
+          <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
+            For Restaurants
+          </div>
+          <h3 class="text-xl font-extrabold text-gray-900">Restaurant Partners (Lunchboxes)</h3>
+          <p class="mt-2 text-gray-700 text-sm">
+            Join as a fulfillment partner. We assign 3–5 boxes from your menu, do pickups, and pay weekly.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">No delivery</span>
+            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Weekly payouts</span>
+          </div>
+        </div>
+        <div class="px-6 pb-6">
+          <button data-nav="restaurant-partners"
+                  class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+                  style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+            Restaurant Onboarding
+          </button>
+        </div>
+      </div>
+
+      <!-- FuelUp Kitchen (cloud/collab kitchen) -->
+      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition">
+        <div class="p-6">
+          <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
+            Operations
+          </div>
+          <h3 class="text-xl font-extrabold text-gray-900">FuelUp Kitchen</h3>
+          <p class="mt-2 text-gray-700 text-sm">
+            Cloud-kitchen collaboration and standardized prep. SOPs, labeling, and QA for consistent output.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Standardized boxes</span>
+            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">SOP-driven</span>
+          </div>
+        </div>
+        <div class="px-6 pb-6">
+          <a href="#" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50">
+            Learn More
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+   <!-- Food · How it works -->
+<div id="food-how" class="mt-12 md:mt-16">
+  <div class="rounded-2xl border border-gray-200 p-6 md:p-8" style="background-color:#fff6ea">
+    <h3 class="text-2xl font-extrabold text-gray-900 mb-6 text-center">How FuelUp Food Works</h3>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- 1 -->
+      <div class="bg-white rounded-xl border border-yellow-200 p-6 text-center shadow-sm">
+        <div class="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 rounded-full flex items-center justify-center font-extrabold text-white"
+             style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+          1
+        </div>
+        <h4 class="font-bold text-gray-900 mb-1">Standardize</h4>
+        <p class="text-sm text-gray-700">We define FuelUp-style boxes and SOPs for consistency.</p>
+      </div>
+      <!-- 2 -->
+      <div class="bg-white rounded-xl border border-yellow-200 p-6 text-center shadow-sm">
+        <div class="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 rounded-full flex items-center justify-center font-extrabold text-white"
+             style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+          2
+        </div>
+        <h4 class="font-bold text-gray-900 mb-1">Pre-Sell</h4>
+        <p class="text-sm text-gray-700">Customers buy passes; we schedule weekday orders.</p>
+      </div>
+      <!-- 3 -->
+      <div class="bg-white rounded-xl border border-yellow-200 p-6 text-center shadow-sm">
+        <div class="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 rounded-full flex items-center justify-center font-extrabold text-white"
+             style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+          3
+        </div>
+        <h4 class="font-bold text-gray-900 mb-1">Fulfill</h4>
+        <p class="text-sm text-gray-700">Restaurants prep; FuelUp handles pickups & service.</p>
       </div>
     </div>
-  </section>
+  </div>
+</div>
 
+</section>
   <!-- RESTAURANT PARTNERS -->
   <section id="restaurant-partners" class="min-h-screen hidden-section">
     <!-- Hero -->
