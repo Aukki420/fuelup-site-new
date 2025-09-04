@@ -83,9 +83,11 @@
     <section class="bg-blue-600 py-16">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h3 class="text-3xl font-bold text-white mb-6">Restaurant? Partner with FuelUp Meals</h3>
-        <button data-nav="restaurant-partners" class="bg-white text-rose-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
-          Restaurant Partners (Lunchboxes)
-        </button>
+        <button data-nav="restaurant-partners"
+        class="px-8 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+        style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+  Restaurant Partners (Lunchboxes)
+</button> 
       </div>
     </section>
 
@@ -473,16 +475,28 @@
   </form>
 </div>
           
-      <!-- Contact block -->
-      <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mt-16">
-        <h3 class="text-2xl font-semibold text-gray-900 mb-6">Contact</h3>
-        <div class="text-gray-600">
-          <p><strong>FuelUp Concepts Ltd.</strong></p>
-          <p>Email: <a href="mailto:hello@fuelupconcepts.ca" class="text-rose-600 hover:text-red-700">hello@fuelupconcepts.ca</a></p>
-          <p>Web: <a href="https://fuelupconcepts.ca" target="_blank" rel="noopener" class="text-rose-600 hover:text-red-700">fuelupconcepts.ca</a></p>
-        </div>
-      </div>
+    <!-- Compact contact bar for partners -->
+<div class="mt-16">
+  <div class="flex flex-col md:flex-row items-center justify-between gap-4 p-5 rounded-xl border border-gray-200"
+       style="background-color:#fdf6ec">
+    <div class="text-center md:text-left">
+      <h4 class="text-lg font-semibold text-gray-900">Questions before you apply?</h4>
+      <p class="text-sm text-gray-700">We’ll reply within one business day.</p>
     </div>
+    <div class="flex flex-col sm:flex-row gap-3">
+      <a href="mailto:hello@fuelupconcepts.ca?subject=Restaurant%20Partner%20Question"
+         class="px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600 text-center"
+         style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+        Email Partnerships
+      </a>
+      <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
+              class="border border-gray-300 bg-white text-gray-800 px-5 py-2 rounded-xl font-semibold hover:bg-gray-50 transition">
+        Back to Form
+      </button>
+    </div>
+  </div>
+</div>
+
   </section>
 
   <!-- TECH -->
@@ -619,41 +633,28 @@
   </section>
 
   <!-- FOOTER -->
-  <footer class="bg-gray-50 border-t border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div class="md:col-span-2">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">FuelUp Concepts Ltd.</h3>
-          <p class="text-gray-600 mb-4">Local service brands across Food, Tech & Events.</p>
-          <p class="text-sm text-gray-500">Kitimat, BC, Canada</p>
-        </div>
-        <div>
-          <h4 class="font-semibold text-gray-900 mb-4">Quick Links</h4>
-          <ul class="space-y-2">
-            <li><button data-nav="home" class="text-gray-600 hover:text-blue-600 text-sm">Home</button></li>
-            <li><button data-nav="food" class="text-gray-600 hover:text-blue-600 text-sm">Food</button></li>
-            <li><button data-nav="tech" class="text-gray-600 hover:text-blue-600 text-sm">Tech</button></li>
-            <li><button data-nav="events" class="text-gray-600 hover:text-blue-600 text-sm">Events</button></li>
-            <li><button data-nav="about" class="text-gray-600 hover:text-blue-600 text-sm">About</button></li>
-            <li><button data-nav="contact" class="text-gray-600 hover:text-blue-600 text-sm">Contact</button></li>
-            <li><button data-nav="restaurant-partners" class="text-gray-600 hover:text-blue-600 text-sm">Restaurant Partners</button></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="font-semibold text-gray-900 mb-4">Contact</h4>
-          <div class="space-y-2 text-sm text-gray-600">
-            <p>hello@fuelupconcepts.ca</p>
-            <p>partnerships@fuelupconcepts.ca</p>
-            <p>bookings@fuelupconcepts.ca</p>
-          </div>
-        </div>
-      </div>
-      <div class="border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500">
-        <p>&copy; <span id="year"></span> FuelUp Concepts Ltd. All rights reserved.</p>
-      </div>
+  <footer class="border-t border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="text-center md:text-left">
+      <h3 class="text-base font-semibold text-gray-900">FuelUp Concepts Ltd.</h3>
+      <p class="text-sm text-gray-600">Kitimat, BC · Food · Tech · Events</p>
     </div>
-  </footer>
 
+    <nav class="flex flex-wrap gap-4 text-sm">
+      <button data-nav="home" class="text-gray-700 hover:text-red-700">Home</button>
+      <button data-nav="food" class="text-gray-700 hover:text-red-700">Food</button>
+      <button data-nav="restaurant-partners" class="text-gray-700 hover:text-red-700">Restaurant Partners</button>
+      <button data-nav="tech" class="text-gray-700 hover:text-red-700">Tech</button>
+      <button data-nav="events" class="text-gray-700 hover:text-red-700">Events</button>
+      <button data-nav="about" class="text-gray-700 hover:text-red-700">About</button>
+      <button data-nav="contact" class="text-gray-700 hover:text-red-700">Contact</button>
+    </nav>
+
+    <div class="text-sm text-gray-500">
+      © <span id="year"></span> FuelUp Concepts Ltd.
+    </div>
+  </div>
+</footer>
   <!-- JS: navigation + Formspree fetch + toast -->
   <script>
     const NAV_SECTIONS = ["home","food","restaurant-partners","tech","events","about","contact"];
