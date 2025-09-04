@@ -4,13 +4,17 @@
   <meta charset="utf-8" />
   <title>FuelUp Concepts Ltd.</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- Tailwind (CDN) -->
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- React 18 (CDN) -->
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <!-- Babel for inline JSX -->
+  <!-- React 18 (production builds) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Babel to run inline JSX -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    /* simple font reset so it looks clean out of the box */
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial; }
+  </style>
 </head>
 <body class="bg-white text-gray-900">
   <div id="root"></div>
@@ -18,92 +22,118 @@
   <script type="text/babel" data-presets="react">
     const { useState, useEffect } = React;
 
-    function App() {
+    /* =========================================================
+       👉 UPDATE THESE WITH YOUR REAL FORMSPREE FORM IDS
+       ========================================================= */
+    const FORMSPREE_PARTNER_ID = "https://formspree.io/f/myzdnvay"; // e.g. "myzdnvay"
+    const FORMSPREE_CONTACT_ID = "https://formspree.io/f/meolrwqq"; // e.g. "meolrwqq"
+
+    /* =================== APP =================== */
+    const App = () => {
       const [currentPage, setCurrentPage] = useState("home");
-      const [formData, setFormData] = useState({});
-      const [formErrors, setFormErrors] = useState({});
       const [submitStatus, setSubmitStatus] = useState(null);
+      const [partnerForm, setPartnerForm] = useState({
+        restaurantName: "",
+        contactName: "",
+        role: "",
+        phone: "",
+        email: "",
+        pickupWindow: "11:30",
+        dailyCapacity: "",
+        menu: "",
+        notes: ""
+      });
+      const [partnerErrors, setPartnerErrors] = useState({});
       const [menuFile, setMenuFile] = useState(null);
 
-      const navigateTo = (page) => { setCurrentPage(page); window.scrollTo(0,0); };
-      const handleInputChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+      const navigateTo = (page) => {
+        setCurrentPage(page);
+        window.scrollTo(0, 0);
       };
-      const handleFileChange = (e) => setMenuFile(e.target.files[0]);
 
-      // ----- VALIDATION (partner form) -----
-      const validateForm = () => {
-        const errors = {};
-        const required = [
-          'restaurantName','contactName','phone','email','fiveDayCommit',
-          'dailyCapacity','packaging','foodSafetyStatus','payoutTarget'
-        ];
-        required.forEach(f => {
-          if (!formData[f] || (typeof formData[f] === 'string' && formData[f].trim() === '')) {
-            errors[f] = 'This field is required';
+      /* -------- Partner form handlers ---------- */
+      const onPartnerChange = (e) => {
+        const { name, value } = e.target;
+        setPartnerForm((p) => ({ ...p, [name]: value }));
+      };
+      const onFileChange = (e) => setMenuFile(e.target.files?.[0] || null);
+
+      const validatePartner = () => {
+        const errs = {};
+        const required = ["restaurantName","contactName","phone","email","dailyCapacity","menu"];
+        required.forEach((f) => {
+          if (!partnerForm[f] || String(partnerForm[f]).trim() === "") {
+            errs[f] = "This field is required";
           }
         });
-        if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) errors.email = 'Enter a valid email';
-        if (formData.phone && !/^\d{10}$|^\d{3}-\d{3}-\d{4}$/.test(String(formData.phone).replace(/\D/g,''))) errors.phone = 'Enter a valid phone number';
-        setFormErrors(errors);
-        return Object.keys(errors).length === 0;
+        if (partnerForm.email && !/\S+@\S+\.\S+/.test(partnerForm.email)) {
+          errs.email = "Please enter a valid email";
+        }
+        const phoneDigits = (partnerForm.phone || "").replace(/\D/g,"");
+        if (phoneDigits.length < 10) {
+          errs.phone = "Please enter a valid phone number";
+        }
+        if (menuFile && menuFile.size > 10 * 1024 * 1024) {
+          errs.menuFile = "File too large (max 10MB)";
+        }
+        setPartnerErrors(errs);
+        return Object.keys(errs).length === 0;
       };
 
-      // ----- SUBMIT: PARTNER (Formspree) -----
-      async function handleSubmitPartnerForm(e) {
+      const submitPartner = async (e) => {
         e.preventDefault();
-        if (!validateForm()) return;
+        if (!validatePartner()) return;
 
-        const formEl = e.target;
-        // Abort if honeypot was filled (bot)
-        if (formEl.querySelector('input[name="_gotcha"]')?.value) return;
-
-        const data = new FormData(formEl);
-        if (menuFile) data.append('menuFile', menuFile);
-        data.append('_subject', `Restaurant Application — ${formData.restaurantName || ''}`);
+        const fd = new FormData(e.target);          // include all inputs
+        if (menuFile) fd.append("menuFile", menuFile);
+        fd.append("_subject", `Restaurant Application — ${partnerForm.restaurantName}`);
 
         try {
-          const res = await fetch("https://formspree.io/f/myzdnvay", {
+          const res = await fetch(`https://formspree.io/f/${FORMSPREE_PARTNER_ID}`, {
             method: "POST",
-            body: data,
+            body: fd,
             headers: { "Accept": "application/json" }
           });
           if (res.ok) {
             setSubmitStatus({ success: true, message: "Thanks — we’ll review and contact you within 1 business day." });
-            formEl.reset(); setFormData({}); setMenuFile(null);
+            e.target.reset();
+            setPartnerForm({
+              restaurantName: "", contactName: "", role: "",
+              phone: "", email: "", pickupWindow: "11:30",
+              dailyCapacity: "", menu: "", notes: ""
+            });
+            setMenuFile(null);
+            setPartnerErrors({});
           } else {
             setSubmitStatus({ success: false, message: "Submission failed. Please try again." });
           }
         } catch {
           setSubmitStatus({ success: false, message: "Network error. Please try again." });
         }
-      }
+      };
 
-      // ----- SUBMIT: CONTACT (Formspree) -----
-      async function handleSubmitContactForm(e) {
+      /* -------- Contact form ---------- */
+      const submitContact = async (e) => {
         e.preventDefault();
-        const formEl = e.target;
-        if (formEl.querySelector('input[name="_gotcha"]')?.value) return;
+        const fd = new FormData(e.target);
+        fd.append("_subject", "Website Contact");
 
-        const data = new FormData(formEl);
-        data.append('_subject', 'Website Contact');
         try {
-          const res = await fetch("https://formspree.io/f/meolrwqq", {
+          const res = await fetch(`https://formspree.io/f/${FORMSPREE_CONTACT_ID}`, {
             method: "POST",
-            body: data,
+            body: fd,
             headers: { "Accept": "application/json" }
           });
           if (res.ok) {
             setSubmitStatus({ success: true, message: "Thank you for your message. We will respond shortly." });
-            formEl.reset();
+            e.target.reset();
           } else {
             setSubmitStatus({ success: false, message: "Submission failed. Please try again." });
           }
         } catch {
           setSubmitStatus({ success: false, message: "Network error. Please try again." });
         }
-      }
+      };
 
       useEffect(() => {
         if (!submitStatus) return;
@@ -111,23 +141,30 @@
         return () => clearTimeout(t);
       }, [submitStatus]);
 
-      // ----- UI components -----
-      const Navigation = () => (
+      /* ----------------- UI parts ----------------- */
+      const Nav = () => (
         <nav className="bg-white shadow-sm sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <h1 className="text-xl font-bold">FuelUp Concepts Ltd.</h1>
-              <div className="hidden md:flex gap-6">
-                {[
-                  ['Home','home'],['Food','food'],['Tech','tech'],
-                  ['Events','events'],['About','about'],['Contact','contact']
-                ].map(([label, path]) => (
-                  <button key={path}
-                          onClick={() => navigateTo(path)}
-                          className={`${currentPage===path?'text-blue-600 border-b-2 border-blue-600':'text-gray-700 hover:text-blue-600'} px-2 py-2`}>
-                    {label}
-                  </button>
-                ))}
+              <div className="font-bold">FuelUp Concepts Ltd.</div>
+              <div className="hidden md:block">
+                <div className="ml-10 flex items-baseline space-x-6">
+                  {[
+                    ["Home","home"],["Food","food"],["Tech","tech"],
+                    ["Events","events"],["About","about"],["Contact","contact"],
+                    ["Restaurant Partners","restaurant-partners"]
+                  ].map(([label, path]) => (
+                    <button
+                      key={path}
+                      onClick={() => navigateTo(path)}
+                      className={`px-3 py-2 text-sm font-medium transition-colors ${
+                        currentPage === path ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-700 hover:text-blue-600"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -135,7 +172,7 @@
       );
 
       const Footer = () => (
-        <footer className="bg-gray-50 border-t">
+        <footer className="bg-gray-50 border-t border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div className="md:col-span-2">
@@ -146,11 +183,9 @@
               <div>
                 <h4 className="font-semibold mb-4">Quick Links</h4>
                 <ul className="space-y-2 text-sm">
-                  {['home','food','tech','events','about','contact'].map(p => (
+                  {["home","food","tech","events","about","contact","restaurant-partners"].map((p) => (
                     <li key={p}>
-                      <button onClick={() => navigateTo(p)} className="text-gray-600 hover:text-blue-600 capitalize">
-                        {p.replace('-',' ')}
-                      </button>
+                      <button onClick={() => navigateTo(p)} className="text-gray-600 hover:text-blue-600">{p.replace("-", " ")}</button>
                     </li>
                   ))}
                 </ul>
@@ -164,46 +199,83 @@
                 </div>
               </div>
             </div>
-            <div className="border-t mt-8 pt-6 text-center text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} FuelUp Concepts Ltd.
+            <div className="border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500">
+              © {new Date().getFullYear()} FuelUp Concepts Ltd. All rights reserved.
             </div>
           </div>
         </footer>
       );
 
-      const StatusMessage = () =>
+      const StatusToast = () =>
         submitStatus ? (
-          <div className={`fixed top-4 right-4 max-w-md w-full p-4 rounded-lg shadow-lg ${submitStatus.success?'bg-green-50 text-green-800':'bg-red-50 text-red-800'}`}>
+          <div className={`fixed top-4 right-4 max-w-md w-full p-4 rounded-lg shadow-lg ${
+            submitStatus.success ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"
+          }`}>
             <p className="text-sm font-medium">{submitStatus.message}</p>
           </div>
         ) : null;
 
-      // ---- PAGES (Home shortened to keep focus) ----
-      const HomePage = () => (
+      /* ----------------- Pages ----------------- */
+      const Home = () => (
         <div className="min-h-screen">
-          <section className="bg-white py-20 text-center">
-            <div className="max-w-3xl mx-auto px-4">
-              <h1 className="text-5xl font-bold mb-6">Local service brands, built to scale.</h1>
-              <p className="text-xl text-gray-600 mb-8">
-                FuelUp operates three verticals — Food, Tech, and Events — with a simple, reliable approach.
+          <section className="bg-white py-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">Local service brands, built to scale.</h1>
+              <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                FuelUp Concepts Ltd. operates three verticals—Food, Tech, and Events—with a simple, reliable approach.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onClick={() => navigateTo('food')} className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">Explore Food</button>
-                <button onClick={() => navigateTo('restaurant-partners')} className="border px-8 py-3 rounded-lg">Restaurant Partners</button>
+                <button onClick={() => navigateTo("food")} className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">Explore Food</button>
+                <button onClick={() => navigateTo("food")} className="border border-gray-300 px-8 py-3 rounded-lg hover:bg-gray-50">View All Verticals</button>
               </div>
             </div>
+          </section>
+
+          <section className="bg-gray-50 py-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <h2 className="text-3xl font-bold text-center mb-12">Our Verticals</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[
+                  { t: "Food — FuelUp Meals", d: "FuelUp Lunchboxes is live today. Future lines: Breakfast & Dinner." },
+                  { t: "Tech", d: "Practical SMB IT & cloud services (coming soon)." },
+                  { t: "Events", d: "Scalable event support for launches, community days & corporate socials." }
+                ].map((x, i) => (
+                  <div key={i} className="bg-white p-8 rounded-lg shadow-sm hover:shadow">
+                    <h3 className="text-xl font-semibold mb-4">{x.t}</h3>
+                    <p className="text-gray-600">{x.d}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-blue-600 py-16 text-center text-white">
+            <h2 className="text-3xl font-bold mb-6">Restaurant? Partner with FuelUp Meals</h2>
+            <button onClick={() => navigateTo("restaurant-partners")} className="bg-white text-blue-600 px-8 py-3 rounded-lg hover:bg-gray-100">
+              Restaurant Partners (Lunchboxes)
+            </button>
           </section>
         </div>
       );
 
-      const FoodPage = () => (
-        <div className="min-h-screen bg-white">
+      const Food = () => (
+        <div className="min-h-screen">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <h1 className="text-4xl font-bold mb-8">Food</h1>
             <div className="bg-gray-50 p-8 rounded-lg mb-12">
-              <h2 className="text-2xl font-semibold mb-4">FuelUp Lunchboxes (live)</h2>
+              <h2 className="text-2xl font-semibold mb-4">FuelUp Meals (sub-vertical)</h2>
+              <p className="text-gray-600">Our customer brand family.</p>
+            </div>
+            <div className="mb-12">
+              <h2 className="text-2xl font-semibold mb-6">FuelUp Lunchboxes (live)</h2>
               <p className="text-gray-600 mb-6">Pre-ordered, restaurant-cooked lunch boxes at fair, predictable pricing.</p>
-              <button onClick={() => navigateTo('restaurant-partners')} className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
+              <div className="bg-gray-50 p-6 rounded-lg mb-6">
+                <h3 className="font-semibold mb-4">How it works</h3>
+                <ol className="list-decimal list-inside space-y-2 text-gray-600">
+                  <li>Pick a pass</li><li>Choose the lunch the night before</li><li>We deliver on schedule</li>
+                </ol>
+              </div>
+              <button onClick={() => navigateTo("restaurant-partners")} className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
                 Restaurant Partners (Lunchboxes)
               </button>
             </div>
@@ -211,168 +283,293 @@
         </div>
       );
 
-      // Restaurant Partners page WITH the new fields
-      const RestaurantPartnersPage = () => (
-        <div className="min-h-screen bg-white">
-          <section className="py-16 bg-gradient-to-br from-blue-50 to-white">
-            <div className="max-w-6xl mx-auto px-4">
-              <h1 className="text-4xl font-bold mb-6">Steady Lunch Orders. No Delivery. No Marketing.</h1>
-              <p className="text-lg text-gray-600 mb-8">We assign you standardized FuelUp Boxes. You cook; we bring orders and pick up on schedule.</p>
+      const RestaurantPartners = () => (
+        <div className="min-h-screen bg-white" id="restaurant-partners">
+          <section className="py-20 bg-gradient-to-br from-blue-50 to-white">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center">
+              <div>
+                <h1 className="text-4xl lg:text-5xl font-bold mb-6">Steady Lunch Orders. No Delivery. No Marketing.</h1>
+                <p className="text-lg text-gray-600 mb-8">
+                  We assign you standardized FuelUp Boxes based on your menu. You cook; we bring the orders and pick up on schedule.
+                </p>
+                <div className="flex flex-wrap gap-3 mb-8">
+                  {["Guaranteed Weekday Volume","Weekly Payouts","Clear SOPs","Local Support"].map((t) => (
+                    <span key={t} className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">{t}</span>
+                  ))}
+                </div>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a href="#apply-form" className="bg-blue-600 text-white px-8 py-3 rounded-lg text-center">Apply to Partner</a>
+                  <a href="#how-it-works" className="border border-gray-300 px-8 py-3 rounded-lg text-center">How it Works</a>
+                </div>
+              </div>
+              <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                <h2 className="text-2xl font-semibold mb-6">Sample Numbers</h2>
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  {[
+                    ["20+","Boxes / Day Min"],
+                    ["5","Days / Week"],
+                    ["100+","Boxes / Week"]
+                  ].map(([big,label]) => (
+                    <div key={label} className="text-center p-4 bg-gray-50 rounded-lg">
+                      <div className="text-3xl font-bold text-blue-600 mb-1">{big}</div>
+                      <div className="text-sm text-gray-600">{label}</div>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-500 text-center italic">*Rates finalized after menu review.</p>
+              </div>
             </div>
           </section>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-            <h2 className="text-3xl font-bold mb-8">Apply to Partner</h2>
-
-            <form onSubmit={handleSubmitPartnerForm} className="bg-white p-8 rounded-xl shadow-sm border">
-              <!-- Honeypot for bots -->
-              <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Restaurant Name *</label>
-                  <input type="text" name="restaurantName" value={formData.restaurantName || ''} onChange={handleInputChange}
-                         className={`w-full px-4 py-2 border rounded-lg ${formErrors.restaurantName?'border-red-500':'border-gray-300'}`} />
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="grid lg:grid-cols-2 gap-8 mb-16">
+              <div className="bg-white p-8 rounded-xl shadow-sm border">
+                <h2 className="text-2xl font-semibold mb-6">What You Get</h2>
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  {[
+                    ["Guaranteed Volume","Daily weekday orders."],
+                    ["Zero Marketing","We handle demand."],
+                    ["No Delivery","We do pickups."],
+                    ["Weekly Payouts","Reliable cashflow."]
+                  ].map(([h,p]) => (
+                    <div key={h} className="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
+                      <div className="font-semibold text-blue-800 mb-1">{h}</div>
+                      <div className="text-sm text-gray-600">{p}</div>
+                    </div>
+                  ))}
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Contact Person *</label>
-                  <input type="text" name="contactName" value={formData.contactName || ''} onChange={handleInputChange}
-                         className={`w-full px-4 py-2 border rounded-lg ${formErrors.contactName?'border-red-500':'border-gray-300'}`} />
-                </div>
+                <h3 className="text-lg font-semibold text-blue-700 mb-3">Our Commitment</h3>
+                <ul className="text-gray-600 space-y-1">
+                  <li>• Clear pickup schedule + route</li>
+                  <li>• Minimum daily order guarantees</li>
+                  <li>• All customer service handled by us</li>
+                </ul>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">Phone *</label>
-                  <input type="tel" name="phone" value={formData.phone || ''} onChange={handleInputChange}
-                         className={`w-full px-4 py-2 border rounded-lg ${formErrors.phone?'border-red-500':'border-gray-300'}`} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Email *</label>
-                  <input type="email" name="email" value={formData.email || ''} onChange={handleInputChange}
-                         className={`w-full px-4 py-2 border rounded-lg ${formErrors.email?'border-red-500':'border-gray-300'}`} />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Daily Lunch Capacity *</label>
-                  <input type="number" name="dailyCapacity" value={formData.dailyCapacity || ''} onChange={handleInputChange}
-                         className={`w-full px-4 py-2 border rounded-lg ${formErrors.dailyCapacity?'border-red-500':'border-gray-300'}`} />
+              <div className="bg-white p-8 rounded-xl shadow-sm border">
+                <h2 className="text-2xl font-semibold mb-6">What We Need</h2>
+                <h3 className="text-lg font-semibold text-blue-700 mb-3">Your Commitment</h3>
+                <ul className="text-gray-600 space-y-1 mb-6">
+                  <li>• Prepare assigned boxes Mon–Fri</li>
+                  <li>• Consistent portions & quality</li>
+                  <li>• Ready by agreed pickup times</li>
+                  <li>• Use acceptable packaging</li>
+                </ul>
+                <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg text-sm">
+                  Example: Your “Butter Chicken” becomes <strong>FuelUp Box #4: Butter Chicken + Rice + Salad</strong>.
                 </div>
               </div>
+            </div>
 
-              <!-- NEW: Menu / Dishes textarea -->
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Menu / Dishes You Can Do (3–5 lunch boxes) *</label>
-                <textarea name="menu" rows="4" value={formData.menu || ''} onChange={handleInputChange}
-                          placeholder="List 3–5 dishes (e.g., Butter Chicken + Rice + Salad)"
-                          className={`w-full px-4 py-2 border rounded-lg ${formErrors.menu?'border-red-500':'border-gray-300'}`}></textarea>
-                {formErrors.menu && <p className="text-sm text-red-600 mt-1">{formErrors.menu}</p>}
+            <div className="bg-white p-8 rounded-xl shadow-sm border mb-16" id="how-it-works">
+              <h2 className="text-3xl font-bold text-center mb-8">How It Works</h2>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {[
+                  ["1","Assign","We map your menu to 3–5 FuelUp Boxes."],
+                  ["2","Prepare","Cook only when orders come in."],
+                  ["3","Collect","FuelUp driver picks up on time."],
+                  ["4","Pay","Weekly payouts per box."]
+                ].map(([n,t,d]) => (
+                  <div key={n} className="text-center p-6 border-2 border-dashed border-blue-200 rounded-lg">
+                    <div className="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-3">{n}</div>
+                    <h3 className="font-bold mb-2">{t}</h3>
+                    <p className="text-gray-600 text-sm">{d}</p>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              <!-- NEW: File upload -->
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Upload Menu/Photos (Optional)</label>
-                <input type="file" name="menuFile" onChange={handleFileChange}
-                       accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx"
-                       className={`w-full px-4 py-2 border rounded-lg ${formErrors.menuFile?'border-red-500':'border-gray-300'}`} />
-                <p className="text-sm text-gray-500 mt-1">Accepted: PDF, JPG, PNG, TXT, DOC, DOCX (max 10MB)</p>
-                {menuFile && <p className="text-sm text-green-600 mt-1">Selected: {menuFile.name}</p>}
-              </div>
+            <!-- APPLY FORM -->
+            <div id="apply-form">
+              <h2 className="text-3xl font-bold mb-8">Apply to Partner</h2>
+              <form onSubmit={submitPartner} className="bg-white p-8 rounded-xl shadow-sm border">
+                {/* Honeypot for bots */}
+                <input type="text" name="_gotcha" className="hidden" tabIndex="-1" autoComplete="off" />
 
-              <!-- Minimal required selects to satisfy validation -->
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div>
-                  <label className="block text-sm font-medium mb-2">5-Day Commit *</label>
-                  <select name="fiveDayCommit" value={formData.fiveDayCommit || ''} onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-lg ${formErrors.fiveDayCommit?'border-red-500':'border-gray-300'}`}>
-                    <option value="">Select…</option>
-                    <option value="Yes">Yes</option><option value="No">No</option>
-                  </select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Restaurant Name *</label>
+                    <input name="restaurantName" value={partnerForm.restaurantName} onChange={onPartnerChange}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${partnerErrors.restaurantName ? "border-red-500" : "border-gray-300"}`} />
+                    {partnerErrors.restaurantName && <p className="text-sm text-red-600 mt-1">{partnerErrors.restaurantName}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Contact Person *</label>
+                    <input name="contactName" value={partnerForm.contactName} onChange={onPartnerChange}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${partnerErrors.contactName ? "border-red-500" : "border-gray-300"}`} />
+                    {partnerErrors.contactName && <p className="text-sm text-red-600 mt-1">{partnerErrors.contactName}</p>}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Packaging *</label>
-                  <select name="packaging" value={formData.packaging || ''} onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-lg ${formErrors.packaging?'border-red-500':'border-gray-300'}`}>
-                    <option value="">Select…</option>
-                    <option value="Single compartment">Single compartment</option>
-                    <option value="Dual compartment">Dual compartment</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2">Food Safety Status *</label>
-                  <select name="foodSafetyStatus" value={formData.foodSafetyStatus || ''} onChange={handleInputChange}
-                          className={`w-full px-4 py-2 border rounded-lg ${formErrors.foodSafetyStatus?'border-red-500':'border-gray-300'}`}>
-                    <option value="">Select…</option>
-                    <option value="Certified">Certified</option>
-                    <option value="In progress">In progress</option>
-                  </select>
-                </div>
-              </div>
 
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Payout Target (CAD/box) *</label>
-                <input type="number" name="payoutTarget" step="0.01" value={formData.payoutTarget || ''} onChange={handleInputChange}
-                       className={`w-full px-4 py-2 border rounded-lg ${formErrors.payoutTarget?'border-red-500':'border-gray-300'}`} />
-              </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Role</label>
+                    <input name="role" value={partnerForm.role} onChange={onPartnerChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Phone *</label>
+                    <input name="phone" value={partnerForm.phone} onChange={onPartnerChange}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${partnerErrors.phone ? "border-red-500" : "border-gray-300"}`} />
+                    {partnerErrors.phone && <p className="text-sm text-red-600 mt-1">{partnerErrors.phone}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Email *</label>
+                    <input type="email" name="email" value={partnerForm.email} onChange={onPartnerChange}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${partnerErrors.email ? "border-red-500" : "border-gray-300"}`} />
+                    {partnerErrors.email && <p className="text-sm text-red-600 mt-1">{partnerErrors.email}</p>}
+                  </div>
+                </div>
 
-              <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
-                Send Application
-              </button>
-            </form>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Best Pickup Window</label>
+                    <select name="pickupWindow" value={partnerForm.pickupWindow} onChange={onPartnerChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                      {["11:15","11:30","11:45","12:00"].map((t) => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Daily Lunch Capacity *</label>
+                    <input type="number" name="dailyCapacity" value={partnerForm.dailyCapacity} onChange={onPartnerChange}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${partnerErrors.dailyCapacity ? "border-red-500" : "border-gray-300"}`} />
+                    {partnerErrors.dailyCapacity && <p className="text-sm text-red-600 mt-1">{partnerErrors.dailyCapacity}</p>}
+                  </div>
+                </div>
+
+                <!-- Your enhancement block -->
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-2">Menu / Dishes You Can Do (3–5 lunch boxes) *</label>
+                  <textarea name="menu" rows="4" value={partnerForm.menu} onChange={onPartnerChange}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${partnerErrors.menu ? "border-red-500" : "border-gray-300"}`}
+                    placeholder="List 3–5 dishes suited for weekday lunch (e.g., Butter Chicken + Rice + Salad)"></textarea>
+                  {partnerErrors.menu && <p className="text-sm text-red-600 mt-1">{partnerErrors.menu}</p>}
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-2">Upload Menu/Photos (Optional)</label>
+                  <input type="file" name="menuFile" accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx"
+                    onChange={onFileChange}
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 ${partnerErrors.menuFile ? "border-red-500" : "border-gray-300"}`} />
+                  <p className="mt-1 text-sm text-gray-500">Accepted: PDF, JPG, PNG, TXT, DOC, DOCX (max 10MB)</p>
+                  {menuFile && <p className="mt-1 text-sm text-green-600">Selected: {menuFile.name} ({(menuFile.size/1048576).toFixed(2)}MB)</p>}
+                  {partnerErrors.menuFile && <p className="mt-1 text-sm text-red-600">{partnerErrors.menuFile}</p>}
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-2">Notes</label>
+                  <textarea name="notes" rows="4" value={partnerForm.notes} onChange={onPartnerChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    placeholder="Any dietary constraints, prep notes, or capacity limits"></textarea>
+                </div>
+
+                <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
+                  Send Application
+                </button>
+              </form>
+            </div>
+
+            <div className="bg-white p-8 rounded-xl shadow-sm border mt-16">
+              <h2 className="text-2xl font-semibold mb-6">Contact</h2>
+              <p className="text-gray-600">Email: <a className="text-blue-600" href="mailto:hello@fuelupconcepts.ca">hello@fuelupconcepts.ca</a></p>
+            </div>
           </div>
         </div>
       );
 
-      const TechPage = () => (<div className="min-h-screen p-20">Tech — coming soon.</div>);
-      const EventsPage = () => (<div className="min-h-screen p-20">Events — coming soon.</div>);
-      const AboutPage = () => (<div className="min-h-screen p-20">About FuelUp.</div>);
+      const Tech = () => (
+        <div className="min-h-screen">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <h1 className="text-4xl font-bold mb-8">Tech</h1>
+            <p className="text-gray-600 mb-8">SMB IT & Cloud Services (coming soon)</p>
+          </div>
+        </div>
+      );
 
-      const ContactPage = () => (
-        <div className="min-h-screen bg-white">
+      const Events = () => (
+        <div className="min-h-screen">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <h1 className="text-4xl font-bold mb-8">Events</h1>
+            <p className="text-gray-600">Scalable event support.</p>
+          </div>
+        </div>
+      );
+
+      const About = () => (
+        <div className="min-h-screen">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <h1 className="text-4xl font-bold mb-8">About</h1>
+            <p className="text-gray-600">FuelUp Concepts builds and runs local service brands.</p>
+          </div>
+        </div>
+      );
+
+      const Contact = () => (
+        <div className="min-h-screen">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <h1 className="text-4xl font-bold mb-8">Contact</h1>
-            <form onSubmit={handleSubmitContactForm} className="bg-white p-8 rounded-lg shadow-sm border max-w-xl">
-              <input type="text" name="_gotcha" style={{display:'none'}} tabIndex="-1" autoComplete="off" />
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Name *</label>
-                <input type="text" name="name" required className="w-full px-4 py-2 border rounded-lg" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <form onSubmit={submitContact} className="bg-white p-8 rounded-lg shadow-sm border">
+                <input type="text" name="_gotcha" className="hidden" tabIndex="-1" autoComplete="off" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Name *</label>
+                    <input name="name" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Email *</label>
+                    <input type="email" name="email" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+                  </div>
+                </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-2">Company</label>
+                  <input name="company" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" />
+                </div>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-2">Message *</label>
+                  <textarea name="message" rows="6" required className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                <button className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">Send Message</button>
+              </form>
+
+              <div className="bg-gray-50 p-8 rounded-lg border">
+                <h3 className="font-semibold mb-4">Email</h3>
+                <p className="text-blue-600">hello@fuelupconcepts.ca</p>
+                <p className="text-blue-600">partnerships@fuelupconcepts.ca</p>
+                <p className="text-blue-600">bookings@fuelupconcepts.ca</p>
+                <div className="mt-8 pt-6 border-t">
+                  <p className="text-sm text-gray-600">Kitimat, BC, Canada</p>
+                </div>
               </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Email *</label>
-                <input type="email" name="email" required className="w-full px-4 py-2 border rounded-lg" />
-              </div>
-              <div className="mb-6">
-                <label className="block text-sm font-medium mb-2">Message *</label>
-                <textarea name="message" rows="5" required className="w-full px-4 py-2 border rounded-lg"></textarea>
-              </div>
-              <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">Send Message</button>
-            </form>
+            </div>
           </div>
         </div>
       );
 
-      function Page() {
+      /* Router-ish switch */
+      const Page = () => {
         switch (currentPage) {
-          case 'food': return <FoodPage />;
-          case 'restaurant-partners': return <RestaurantPartnersPage />;
-          case 'tech': return <TechPage />;
-          case 'events': return <EventsPage />;
-          case 'about': return <AboutPage />;
-          case 'contact': return <ContactPage />;
-          default: return <HomePage />;
+          case "food": return <Food />;
+          case "restaurant-partners": return <RestaurantPartners />;
+          case "tech": return <Tech />;
+          case "events": return <Events />;
+          case "about": return <About />;
+          case "contact": return <Contact />;
+          default: return <Home />;
         }
-      }
+      };
 
       return (
-        <div className="font-sans">
-          <Navigation />
-          <StatusMessage />
+        <div>
+          <Nav />
+          <StatusToast />
           <Page />
           <Footer />
         </div>
       );
-    }
+    };
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
   </script>
 </body>
 </html>
