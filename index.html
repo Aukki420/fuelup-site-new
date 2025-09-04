@@ -22,13 +22,8 @@
   <script type="text/babel" data-presets="react">
     const { useState, useEffect } = React;
 
-    /* =========================================================
-       👉 UPDATE THESE WITH YOUR REAL FORMSPREE FORM IDS
-       ========================================================= */
-    const FORMSPREE_PARTNER_ID = "https://formspree.io/f/myzdnvay"; // e.g. "myzdnvay"
-    const FORMSPREE_CONTACT_ID = "https://formspree.io/f/meolrwqq"; // e.g. "meolrwqq"
-
-    /* =================== APP =================== */
+    const FORMSPREE_PARTNER_ID = "https://formspree.io/f/myzdnvay"; 
+    const FORMSPREE_CONTACT_ID = "https://formspree.io/f/meolrwqq"; 
     const App = () => {
       const [currentPage, setCurrentPage] = useState("home");
       const [submitStatus, setSubmitStatus] = useState(null);
