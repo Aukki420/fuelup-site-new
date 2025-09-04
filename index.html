@@ -61,16 +61,41 @@
       const handleFileChange = (e) => { setMenuFile(e.target.files[0]); };
 
       const validateForm = () => {
-        const errors = {};
-        const required = ['restaurantName','contactName','phone','email','fiveDayCommit','dailyCapacity','packaging','foodSafetyStatus','payoutTarget'];
-        required.forEach(f => {
-          if (!formData[f] || (typeof formData[f] === 'string' && formData[f].trim() === '')) errors[f] = 'This field is required';
-        });
-        if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) errors.email = 'Please enter a valid email';
-        if (formData.phone && !/^\d{10}$|^\d{3}-\d{3}-\d{4}$/.test(String(formData.phone).replace(/\D/g,''))) errors.phone = 'Please enter a valid phone number';
-        setFormErrors(errors);
-        return Object.keys(errors).length === 0;
-      };
+  const errors = {};
+  const required = [
+    'restaurantName','contactName','phone','email',
+    'fiveDayCommit','dailyCapacity','packaging','foodSafetyStatus','payoutTarget',
+    'menu' // now required
+  ];
+
+  required.forEach(f => {
+    if (!formData[f] || (typeof formData[f] === 'string' && formData[f].trim() === '')) {
+      errors[f] = 'This field is required';
+    }
+  });
+
+  if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+    errors.email = 'Please enter a valid email';
+  }
+
+  if (formData.phone && !/^\d{10}$|^\d{3}-\d{3}-\d{4}$/.test(String(formData.phone).replace(/\D/g,''))) {
+    errors.phone = 'Please enter a valid phone number';
+  }
+
+  // Optional client checks for the file
+  if (menuFile && menuFile.size > 10 * 1024 * 1024) {
+    errors.menuFile = 'File is too large (max 10MB).';
+  } else if (menuFile) {
+    const ok = ['pdf','jpg','jpeg','png','txt','doc','docx'];
+    const ext = (menuFile.name.split('.').pop() || '').toLowerCase();
+    if (!ok.includes(ext)) {
+      errors.menuFile = 'Unsupported file type.';
+    }
+  }
+
+  setFormErrors(errors);
+  return Object.keys(errors).length === 0;
+};
 
       // Formspree — Restaurant Partner form
       const handleSubmitPartnerForm = async (e) => {
@@ -83,6 +108,12 @@
 
         const data = new FormData(formEl);
         data.append("_subject", `Restaurant Application — ${formData.restaurantName || ""}`);
+// include file if present
+if (menuFile) {
+  data.append('menuFile', menuFile);
+  data.append('_file_meta', `${menuFile.name} • ${(menuFile.size/1024/1024).toFixed(2)}MB`);
+}
+
 
         try {
           const res = await fetch("https://formspree.io/f/myzdnvay", {
@@ -485,56 +516,98 @@
             <div id="apply-form">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Apply to Partner</h2>
               <form onSubmit={handleSubmitPartnerForm} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-                <!-- honeypot -->
-                <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+                               {/* honeypot */}
+                <input type="text" name="_gotcha" style="display:none" tabIndex="-1" autoComplete="off" />
 
+                {/* Existing minimal fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Restaurant Name *</label>
-                    <input type="text" name="restaurantName" value={formData.restaurantName || ''} onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.restaurantName ? 'border-red-500' : 'border-gray-300'}`}/>
-                    {formErrors.restaurantName && <p className="mt-1 text-sm text-red-600">{formErrors.restaurantName}</p>}
+                    <input
+                      type="text"
+                      name="restaurantName"
+                      value={formData.restaurantName || ''}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        formErrors.restaurantName ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {formErrors.restaurantName && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.restaurantName}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Contact Person *</label>
-                    <input type="text" name="contactName" value={formData.contactName || ''} onChange={handleInputChange}
-                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.contactName ? 'border-red-500' : 'border-gray-300'}`}/>
-                    {formErrors.contactName && <p className="mt-1 text-sm text-red-600">{formErrors.contactName}</p>}
+                    <input
+                      type="text"
+                      name="contactName"
+                      value={formData.contactName || ''}
+                      onChange={handleInputChange}
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                        formErrors.contactName ? 'border-red-500' : 'border-gray-300'
+                      }`}
+                    />
+                    {formErrors.contactName && (
+                      <p className="mt-1 text-sm text-red-600">{formErrors.contactName}</p>
+                    )}
                   </div>
                 </div>
 
-                <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">Send Application</button>
-              </form>
-            </div>
+                {/* >>> NEW BLOCK 1: Menu textarea (REQUIRED) */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Menu / Dishes You Can Do (3–5 lunch boxes) *
+                  </label>
+                  <textarea
+                    name="menu"
+                    value={formData.menu || ''}
+                    onChange={handleInputChange}
+                    rows="4"
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      formErrors.menu ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                    placeholder="List 3–5 dishes suited for weekday lunch (e.g., Butter Chicken + Rice + Salad)"
+                  ></textarea>
+                  {formErrors.menu && (
+                    <p className="mt-1 text-sm text-red-600">{formErrors.menu}</p>
+                  )}
+                </div>
 
-            <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mt-16">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">Contact</h2>
-              <div className="text-gray-600">
-                <p><strong>FuelUp Concepts Ltd.</strong></p>
-                <p>Email: <a href="mailto:hello@fuelupconcepts.ca" className="text-blue-600 hover:text-blue-800">hello@fuelupconcepts.ca</a></p>
-                <p>Web: <a href="https://fuelupconcepts.ca" target="_blank" rel="noopener" className="text-blue-600 hover:text-blue-800">fuelupconcepts.ca</a></p>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+                {/* >>> NEW BLOCK 2: Optional file upload */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Upload Menu/Photos (Optional)
+                  </label>
+                  <input
+                    type="file"
+                    name="menuFile"
+                    onChange={handleFileChange}
+                    accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx"
+                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                      formErrors.menuFile ? 'border-red-500' : 'border-gray-300'
+                    }`}
+                  />
+                  <p className="mt-1 text-sm text-gray-500">
+                    Accepted formats: PDF, JPG, PNG, TXT, DOC, DOCX (max 10MB)
+                  </p>
+                  {formErrors.menuFile && (
+                    <p className="mt-1 text-sm text-red-600">{formErrors.menuFile}</p>
+                  )}
+                  {menuFile && (
+                    <p className="mt-1 text-sm text-green-600">
+                      Selected: {menuFile.name} ({(menuFile.size / 1024 / 1024).toFixed(2)}MB)
+                    </p>
+                  )}
+                </div>
 
-      const TechPage = () => (
-        <div className="min-h-screen bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <h1 className="text-4xl font-bold text-gray-900 mb-8">Tech</h1>
-            <div className="bg-gray-50 p-8 rounded-lg mb-12">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">SMB IT & Cloud Services (coming soon)</h2>
-              <ul className="space-y-2 text-gray-600">
-                <li>• Helpdesk</li>
-                <li>• Email/Workspace setup</li>
-                <li>• Network & Wi-Fi</li>
-                <li>• Security basics (MFA, SPF/DKIM/DMARC)</li>
-                <li>• POS/KDS guidance</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-6">Stay Updated</h3>
+                {/* Submit */}
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200"
+                >
+                  Send Application
+                </button>
+
               <form onSubmit={handleSubmitContactForm} className="bg-white p-8 rounded-lg shadow-sm max-w-md">
                 <!-- honeypot -->
                 <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
