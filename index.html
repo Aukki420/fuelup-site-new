@@ -188,61 +188,68 @@
   <!-- RESTAURANT PARTNERS -->
   <section id="restaurant-partners" class="min-h-screen hidden-section">
     <!-- Hero -->
-   export default function PartnerHero() {
-  return (
-    <section className="relative overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 -z-10 bg-[#fdf6ec]" />
+  <section class="py-20" style="background-color:#fdf6ec">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <!-- FuelUp Lunchboxes badge + logo -->
+        <img src="lunchboxes-logo.PNG" alt="FuelUp Lunchboxes" class="h-18 w-auto mb-3">
+        <span class="inline-flex items-center rounded-full bg-white text-red-700 border border-red-200 px-3 py-1 text-xs font-semibold mb-4">
+          FuelUp Lunchboxes
+        </span>
 
-      {/* Content */}
-      <div className="mx-auto max-w-7xl px-6 py-20 sm:py-28">
-        <div className="max-w-3xl">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1 text-xs font-semibold shadow">
-            <span className="inline-block h-2 w-2 rounded-full bg-red-600" />
-            Open for New Restaurants in Kitimat
-          </div>
+        <h2 class="text-4xl lg:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">
+          Partner with FuelUp Meals — steady weekday orders.
+        </h2>
+        <p class="text-lg text-gray-700 mb-8 leading-relaxed">
+          We assign standardized FuelUp Boxes from your menu. You cook; we bring the orders and do scheduled pickups.
+          <span class="font-semibold text-red-600">No delivery.</span>
+          <span class="font-semibold text-yellow-600"> Weekly payouts.</span>
+          <span class="font-semibold"> Zero upfront cost.</span>
+        </p>
 
-          <h1 className="text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-6xl">
-            Partner with <span className="text-red-600">FuelUp Meals</span>
-          </h1>
+        <div class="flex flex-wrap gap-3 mb-8">
+          <span class="bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">Guaranteed Weekday Volume</span>
+          <span class="bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">No Marketing Needed</span>
+          <span class="bg-white text-gray-800 px-4 py-2 rounded-full text-sm font-medium border border-gray-200">Predictable Cash-Flow</span>
+        </div>
 
-          <p className="mt-6 max-w-2xl text-lg/7 text-neutral-800">
-            We bring you <span className="font-semibold text-red-600">guaranteed weekday meal orders</span>,
-            <span className="font-semibold text-yellow-500"> predictable weekly payouts</span>, and
-            <span className="font-semibold"> zero upfront cost</span>. Keep running your kitchen as usual—
-            we handle pre‑sales, logistics, and customer support.
-          </p>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#apply" className="rounded-2xl px-5 py-3 text-base font-semibold text-white shadow-lg transition active:scale-[.99] focus:outline-none focus:ring-2 focus:ring-red-600"
-               style={{ backgroundImage: "linear-gradient(135deg, #dc2626 0%, #facc15 100%)" }}>
-              Join as a Restaurant Partner
-            </a>
-            <a href="#how-it-works" className="rounded-2xl border border-neutral-900/10 bg-white/80 px-5 py-3 text-base font-semibold text-neutral-900 backdrop-blur-sm hover:bg-white">
-              How it works
-            </a>
-          </div>
-
-          {/* Trust / quick facts */}
-          <dl className="mt-10 grid max-w-2xl grid-cols-2 gap-6 text-sm text-neutral-900 sm:grid-cols-3">
-            <div className="rounded-2xl bg-white/80 p-4 shadow">
-              <dt className="font-semibold text-red-600">No Upfront Cost</dt>
-              <dd className="mt-1 text-neutral-700">You pay nothing to start.</dd>
-            </div>
-            <div className="rounded-2xl bg-white/80 p-4 shadow">
-              <dt className="font-semibold text-yellow-600">Weekly Payouts</dt>
-              <dd className="mt-1 text-neutral-700">Predictable cash‑flow.</dd>
-            </div>
-            <div className="rounded-2xl bg-white/80 p-4 shadow sm:col-span-1 col-span-2">
-              <dt className="font-semibold">Keep Your Brand</dt>
-              <dd className="mt-1 text-neutral-700">Operate as usual in your kitchen.</dd>
-            </div>
-          </dl>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
+                  class="px-8 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+                  style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+            Apply to Partner
+          </button>
+          <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})"
+                  class="border border-gray-300 bg-white text-gray-800 px-8 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+            How it Works
+          </button>
         </div>
       </div>
-    </section>
-  );
-}
+
+      <!-- Right column: simple stat card (kept from your layout style) -->
+      <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+        <h3 class="text-2xl font-semibold text-gray-900 mb-6">Sample Numbers</h3>
+        <div class="grid grid-cols-3 gap-4 mb-4">
+          <div class="text-center p-4 bg-gray-50 rounded-lg">
+            <div class="text-3xl font-extrabold text-red-600 mb-1">20+</div>
+            <div class="text-sm text-gray-600">Boxes / Day Min</div>
+          </div>
+          <div class="text-center p-4 bg-gray-50 rounded-lg">
+            <div class="text-3xl font-extrabold text-red-600 mb-1">5</div>
+            <div class="text-sm text-gray-600">Days / Week</div>
+          </div>
+          <div class="text-center p-4 bg-gray-50 rounded-lg">
+            <div class="text-3xl font-extrabold text-red-600 mb-1">100+</div>
+            <div class="text-sm text-gray-600">Boxes / Week</div>
+          </div>
+        </div>
+        <p class="text-sm text-gray-500 text-center italic">*Rates finalized after menu review.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
         <!-- What You Get -->
