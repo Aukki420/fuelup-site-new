@@ -1,18 +1,651 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>FuelUp — It works</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>body{font-family:system-ui,Arial,sans-serif;display:grid;place-items:center;height:100vh;margin:0}
-    .box{max-width:640px;padding:24px;border:1px solid #ddd;border-radius:12px}
-    h1{margin:0 0 8px} p{margin:8px 0}</style>
-  </head>
-  <body>
-    <div class="box">
-      <h1>FuelUp Concepts</h1>
-      <p>It works. This is a minimal static page served from <strong>fuelup-site-new</strong>.</p>
-      <p>If you see this, hosting and domain routing are OK.</p>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>FuelUp Concepts Ltd.</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hidden-section{display:none}
+    .toast{position:fixed;top:16px;right:16px;z-index:1000}
+  </style>
+</head>
+<body class="bg-white text-gray-900">
+  <!-- Toast -->
+  <div id="toast" class="toast hidden-section max-w-md w-full p-4 rounded-lg shadow-lg"></div>
+
+  <!-- NAV -->
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex-shrink-0 flex items-center">
+          <h1 class="text-xl font-bold text-gray-900">FuelUp Concepts Ltd.</h1>
+        </div>
+        <div class="hidden md:block">
+          <div class="ml-10 flex items-baseline space-x-8">
+            <button data-nav="home" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Home</button>
+            <button data-nav="food" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Food</button>
+            <button data-nav="tech" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Tech</button>
+            <button data-nav="events" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Events</button>
+            <button data-nav="about" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">About</button>
+            <button data-nav="contact" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Contact</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </body>
+  </nav>
+
+  <!-- HOME -->
+  <section id="home" class="min-h-screen">
+    <!-- Hero -->
+    <section class="bg-white py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+          Local service brands, built to scale.
+        </h2>
+        <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          FuelUp Concepts Ltd. operates three verticals—Food, Tech, and Events—with a simple, reliable approach.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <button data-nav="food" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+            Explore Food
+          </button>
+          <button data-nav="food" class="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+            View All Verticals
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Verticals -->
+    <section class="bg-gray-50 py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h3 class="text-3xl font-bold text-center text-gray-900 mb-12">Our Verticals</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <h4 class="text-xl font-semibold text-gray-900 mb-4">Food — FuelUp Meals</h4>
+            <p class="text-gray-600">FuelUp Lunchboxes is live today. Future lines: Breakfast & Dinner.</p>
+          </div>
+          <div class="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <h4 class="text-xl font-semibold text-gray-900 mb-4">Tech</h4>
+            <p class="text-gray-600">Practical SMB IT & cloud services (coming soon): helpdesk, email/workspace, networking, security basics.</p>
+          </div>
+          <div class="bg-white p-8 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <h4 class="text-xl font-semibold text-gray-900 mb-4">Events</h4>
+            <p class="text-gray-600">Scalable event support—from retail launches and community days to corporate socials.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="bg-blue-600 py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h3 class="text-3xl font-bold text-white mb-6">Restaurant? Partner with FuelUp Meals</h3>
+        <button data-nav="restaurant-partners" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+          Restaurant Partners (Lunchboxes)
+        </button>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="bg-white py-20">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h3 class="text-3xl font-bold text-center text-gray-900 mb-12">Frequently Asked Questions</h3>
+        <div class="space-y-6">
+          <div class="border-b border-gray-200 pb-6">
+            <h4 class="text-lg font-semibold text-gray-900 mb-2">Is this a consumer ordering site?</h4>
+            <p class="text-gray-600">No. This is business-facing. Consumer ordering for Lunchboxes lives under FuelUp Meals.</p>
+          </div>
+          <div class="border-b border-gray-200 pb-6">
+            <h4 class="text-lg font-semibold text-gray-900 mb-2">How do restaurant payouts work?</h4>
+            <p class="text-gray-600">Fixed per-box payout, reconciled weekly; no hidden fees.</p>
+          </div>
+          <div class="border-b border-gray-200 pb-6">
+            <h4 class="text-lg font-semibold text-gray-900 mb-2">Where do you operate?</h4>
+            <p class="text-gray-600">Kitimat, BC (initial market).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Home → Contact -->
+    <section class="bg-gray-50 py-20">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h3 class="text-3xl font-bold text-center text-gray-900 mb-12">Get in Touch</h3>
+        <form id="contact-form" class="bg-white p-8 rounded-lg shadow-sm">
+          <input type="text" name="_gotcha" class="hidden" autocomplete="off" tabindex="-1" />
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Name *</label>
+              <input required name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+              <input required type="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            </div>
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Company</label>
+            <input name="company" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+          </div>
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+            <textarea required name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+          </div>
+          <button class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+            Send Message
+          </button>
+        </form>
+      </div>
+    </section>
+  </section>
+
+  <!-- FOOD -->
+  <section id="food" class="min-h-screen hidden-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <h2 class="text-4xl font-bold text-gray-900 mb-8">Food</h2>
+      <div class="bg-gray-50 p-8 rounded-lg mb-12">
+        <h3 class="text-2xl font-semibold text-gray-900 mb-4">FuelUp Meals (sub-vertical)</h3>
+        <p class="text-gray-600">Our customer brand family.</p>
+      </div>
+      <div class="mb-12">
+        <h3 class="text-2xl font-semibold text-gray-900 mb-6">FuelUp Lunchboxes (live)</h3>
+        <p class="text-gray-600 mb-6">Pre-ordered, restaurant-cooked lunch boxes at fair, predictable pricing.</p>
+        <div class="bg-gray-50 p-6 rounded-lg mb-6">
+          <h4 class="font-semibold text-gray-900 mb-4">How it works</h4>
+          <ol class="list-decimal list-inside space-y-2 text-gray-600">
+            <li>Pick a pass</li>
+            <li>Choose the lunch the night before</li>
+            <li>We deliver on schedule</li>
+          </ol>
+        </div>
+        <button data-nav="restaurant-partners" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+          Restaurant Partners (Lunchboxes)
+        </button>
+      </div>
+      <div>
+        <h3 class="text-2xl font-semibold text-gray-900 mb-6">Coming next</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h4 class="text-xl font-semibold text-gray-900 mb-2">Breakfast</h4>
+            <p class="text-gray-600">Placeholder for breakfast service details.</p>
+          </div>
+          <div class="bg-gray-50 p-6 rounded-lg">
+            <h4 class="text-xl font-semibold text-gray-900 mb-2">Dinner</h4>
+            <p class="text-gray-600">Placeholder for dinner service details.</p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-12 text-center">
+        <span class="text-blue-600 font-medium">Consumer site: FuelUp Meals</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESTAURANT PARTNERS -->
+  <section id="restaurant-partners" class="min-h-screen hidden-section">
+    <!-- Hero -->
+    <section class="py-20 bg-gradient-to-br from-blue-50 to-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 class="text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+              Steady Lunch Orders. No Delivery. No Marketing.
+            </h2>
+            <p class="text-lg text-gray-600 mb-8 leading-relaxed">
+              We assign you standardized FuelUp Boxes based on your menu. You cook; we bring the orders and pick up on schedule.
+            </p>
+            <div class="flex flex-wrap gap-3 mb-8">
+              <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Guaranteed Weekday Volume</span>
+              <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Weekly Payouts</span>
+              <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Clear SOPs</span>
+              <span class="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium">Local Support</span>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4">
+              <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
+                      class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                Apply to Partner
+              </button>
+              <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})"
+                      class="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                How it Works
+              </button>
+            </div>
+          </div>
+          <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+            <h3 class="text-2xl font-semibold text-gray-900 mb-6">Sample Numbers</h3>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+              <div class="text-center p-4 bg-gray-50 rounded-lg">
+                <div class="text-3xl font-bold text-blue-600 mb-1">20+</div>
+                <div class="text-sm text-gray-600">Boxes / Day Min</div>
+              </div>
+              <div class="text-center p-4 bg-gray-50 rounded-lg">
+                <div class="text-3xl font-bold text-blue-600 mb-1">5</div>
+                <div class="text-sm text-gray-600">Days / Week</div>
+              </div>
+              <div class="text-center p-4 bg-gray-50 rounded-lg">
+                <div class="text-3xl font-bold text-blue-600 mb-1">100+</div>
+                <div class="text-sm text-gray-600">Boxes / Week</div>
+              </div>
+            </div>
+            <p class="text-sm text-gray-500 text-center italic">*Rates finalized after menu review.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+        <!-- What You Get -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+          <h3 class="text-2xl font-semibold text-gray-900 mb-6">What You Get</h3>
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
+              <div class="font-semibold text-blue-800 mb-1">Guaranteed Volume</div>
+              <div class="text-sm text-gray-600">Daily weekday orders.</div>
+            </div>
+            <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
+              <div class="font-semibold text-blue-800 mb-1">Zero Marketing</div>
+              <div class="text-sm text-gray-600">We handle demand.</div>
+            </div>
+            <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
+              <div class="font-semibold text-blue-800 mb-1">No Delivery</div>
+              <div class="text-sm text-gray-600">We do pickups.</div>
+            </div>
+            <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-100">
+              <div class="font-semibold text-blue-800 mb-1">Weekly Payouts</div>
+              <div class="text-sm text-gray-600">Reliable cashflow.</div>
+            </div>
+          </div>
+          <h4 class="text-lg font-semibold text-blue-700 mb-3">Our Commitment</h4>
+          <ul class="text-gray-600 space-y-1">
+            <li>• Clear pickup schedule + route</li>
+            <li>• Minimum daily order guarantees</li>
+            <li>• All customer service handled by us</li>
+          </ul>
+        </div>
+
+        <!-- What We Need -->
+        <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+          <h3 class="text-2xl font-semibold text-gray-900 mb-6">What We Need</h3>
+          <h4 class="text-lg font-semibold text-blue-700 mb-3">Your Commitment</h4>
+          <ul class="text-gray-600 space-y-1 mb-6">
+            <li>• Prepare assigned boxes Mon–Fri</li>
+            <li>• Consistent portions & quality</li>
+            <li>• Ready by agreed pickup times</li>
+            <li>• Use acceptable packaging (single/dual compartment)</li>
+          </ul>
+          <div class="bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg text-sm">
+            Example: Your "Butter Chicken" becomes <strong>FuelUp Box #4: Butter Chicken + Rice + Salad</strong>.
+          </div>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div id="how-it-works" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mb-16">
+        <h3 class="text-3xl font-bold text-gray-900 mb-8 text-center">How It Works</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div class="text-center p-6 border-2 border-dashed border-blue-200 rounded-lg">
+            <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-3">1</div>
+            <h4 class="font-bold text-gray-900 mb-2">Assign</h4>
+            <p class="text-gray-600 text-sm">We map your menu to 3–5 FuelUp Boxes.</p>
+          </div>
+          <div class="text-center p-6 border-2 border-dashed border-blue-200 rounded-lg">
+            <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-3">2</div>
+            <h4 class="font-bold text-gray-900 mb-2">Prepare</h4>
+            <p class="text-gray-600 text-sm">Cook only when orders come in.</p>
+          </div>
+          <div class="text-center p-6 border-2 border-dashed border-blue-200 rounded-lg">
+            <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-3">3</div>
+            <h4 class="font-bold text-gray-900 mb-2">Collect</h4>
+            <p class="text-gray-600 text-sm">FuelUp driver picks up on time.</p>
+          </div>
+          <div class="text-center p-6 border-2 border-dashed border-blue-200 rounded-lg">
+            <div class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center text-lg font-bold mx-auto mb-3">4</div>
+            <h4 class="font-bold text-gray-900 mb-2">Pay</h4>
+            <p class="text-gray-600 text-sm">Weekly payouts per box.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Application Form -->
+      <div id="apply-form">
+        <h3 class="text-3xl font-bold text-gray-900 mb-8">Apply to Partner</h3>
+        <form id="partner-form" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100" enctype="multipart/form-data">
+          <input type="text" name="_gotcha" class="hidden" autocomplete="off" tabindex="-1" />
+          <input type="hidden" name="_subject" value="Restaurant Application — FuelUp" />
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Restaurant Name *</label>
+              <input required name="restaurantName" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Contact Person *</label>
+              <input required name="contactName" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
+              <input name="role" placeholder="Owner / Manager / Chef"
+                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Phone *</label>
+              <input required name="phone" type="tel" placeholder="e.g. 555-123-4567"
+                     class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+              <input required name="email" type="email" placeholder="name@restaurant.com"
+                     class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Best Pickup Window</label>
+              <select name="pickupWindow" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="11:15">11:15 AM</option>
+                <option value="11:30">11:30 AM</option>
+                <option value="11:45">11:45 AM</option>
+                <option value="12:00">12:00 PM</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Daily Lunch Capacity *</label>
+              <input required name="dailyCapacity" type="number" min="1" placeholder="Minimum 20 boxes/day"
+                     class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            </div>
+          </div>
+
+          <!-- Enhancement: menu textarea + optional file upload -->
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Menu / Dishes You Can Do (3–5 lunch boxes) *
+            </label>
+            <textarea required name="menu" rows="4"
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="List 3–5 dishes suited for weekday lunch (e.g., Butter Chicken + Rice + Salad)"></textarea>
+          </div>
+
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Menu/Photos (Optional)</label>
+            <input type="file" name="menuFile" accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx"
+                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            <p class="mt-1 text-sm text-gray-500">Accepted: PDF, JPG, PNG, TXT, DOC, DOCX (max ~10MB)</p>
+          </div>
+
+          <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+            <textarea name="notes" rows="3"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Dietary constraints, special prep notes, capacity limits"></textarea>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4">
+            <button class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+              Send Application
+            </button>
+            <div class="text-center sm:text-left">
+              <p class="text-sm text-gray-500">Prefer email?</p>
+              <a href="mailto:hello@fuelupconcepts.ca?subject=Restaurant%20Partner%20Application"
+                 class="text-blue-600 hover:text-blue-800 text-sm font-medium">hello@fuelupconcepts.ca</a>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Contact block -->
+      <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 mt-16">
+        <h3 class="text-2xl font-semibold text-gray-900 mb-6">Contact</h3>
+        <div class="text-gray-600">
+          <p><strong>FuelUp Concepts Ltd.</strong></p>
+          <p>Email: <a href="mailto:hello@fuelupconcepts.ca" class="text-blue-600 hover:text-blue-800">hello@fuelupconcepts.ca</a></p>
+          <p>Web: <a href="https://fuelupconcepts.ca" target="_blank" rel="noopener" class="text-blue-600 hover:text-blue-800">fuelupconcepts.ca</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH -->
+  <section id="tech" class="min-h-screen hidden-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <h2 class="text-4xl font-bold text-gray-900 mb-8">Tech</h2>
+      <div class="bg-gray-50 p-8 rounded-lg mb-12">
+        <h3 class="text-2xl font-semibold text-gray-900 mb-6">SMB IT & Cloud Services (coming soon)</h3>
+        <ul class="space-y-2 text-gray-600">
+          <li>• Helpdesk</li>
+          <li>• Email/Workspace setup</li>
+          <li>• Network & Wi-Fi</li>
+          <li>• Security basics (MFA, SPF/DKIM/DMARC)</li>
+          <li>• POS/KDS guidance</li>
+        </ul>
+      </div>
+
+      <h4 class="text-xl font-semibold text-gray-900 mb-6">Stay Updated</h4>
+      <form id="contact-form-tech" class="bg-white p-8 rounded-lg shadow-sm max-w-md">
+        <input type="text" name="_gotcha" class="hidden" autocomplete="off" tabindex="-1" />
+        <input type="hidden" name="_subject" value="Website Contact — Tech Updates" />
+        <div class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Name *</label>
+            <input required name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+            <input required type="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Company</label>
+            <input name="company" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+          </div>
+          <button class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors w-full">
+            Get Updates
+          </button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- EVENTS -->
+  <section id="events" class="min-h-screen hidden-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <h2 class="text-4xl font-bold text-gray-900 mb-8">Events</h2>
+      <p class="text-xl text-gray-600 mb-8">Scalable event support for retailers, venues, and corporate teams.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div class="bg-gray-50 p-6 rounded-lg text-center"><h4 class="font-semibold text-gray-900">Retail launches</h4></div>
+        <div class="bg-gray-50 p-6 rounded-lg text-center"><h4 class="font-semibold text-gray-900">Community days</h4></div>
+        <div class="bg-gray-50 p-6 rounded-lg text-center"><h4 class="font-semibold text-gray-900">Corporate socials</h4></div>
+        <div class="bg-gray-50 p-6 rounded-lg text-center"><h4 class="font-semibold text-gray-900">Brand activations</h4></div>
+      </div>
+      <div class="bg-gray-50 p-12 rounded-lg text-center">
+        <p class="text-gray-600">First case study coming soon.</p>
+      </div>
+      <div class="text-center mt-8">
+        <button data-nav="contact" class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+          Inquire About Services
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="min-h-screen hidden-section">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <h2 class="text-4xl font-bold text-gray-900 mb-8">About</h2>
+      <div class="bg-gray-50 p-8 rounded-lg mb-12">
+        <p class="text-lg text-gray-600 leading-relaxed">
+          FuelUp Concepts Ltd. builds and runs local service brands across Food, Tech, and Events.
+          We standardize operations, prove unit economics, and scale only what works.
+        </p>
+      </div>
+      <h3 class="text-2xl font-semibold text-gray-900 mb-6">Our Values</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-gray-50 p-6 rounded-lg"><h4 class="text-lg font-semibold text-gray-900 mb-2">Clarity</h4></div>
+        <div class="bg-gray-50 p-6 rounded-lg"><h4 class="text-lg font-semibold text-gray-900 mb-2">Reliability</h4></div>
+        <div class="bg-gray-50 p-6 rounded-lg"><h4 class="text-lg font-semibold text-gray-900 mb-2">Local accountability</h4></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="min-h-screen hidden-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <h2 class="text-4xl font-bold text-gray-900 mb-8">Contact</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div>
+          <h3 class="text-2xl font-semibold text-gray-900 mb-6">Send us a message</h3>
+          <form id="contact-form-page" class="bg-white p-8 rounded-lg shadow-sm">
+            <input type="text" name="_gotcha" class="hidden" autocomplete="off" tabindex="-1" />
+            <input type="hidden" name="_subject" value="Website Contact — FuelUp" />
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Name *</label>
+                <input required name="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                <input required type="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+              </div>
+            </div>
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Company</label>
+              <input name="company" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+            </div>
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Message *</label>
+              <textarea required name="message" rows="6" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+            </div>
+            <button class="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+              Send Message
+            </button>
+          </form>
+        </div>
+
+        <div>
+          <h3 class="text-2xl font-semibold text-gray-900 mb-6">Contact Information</h3>
+          <div class="bg-gray-50 p-8 rounded-lg">
+            <h4 class="font-semibold text-gray-900 mb-4">Email</h4>
+            <div class="space-y-3">
+              <div><p class="text-sm font-medium text-gray-700">General Inquiries</p><p class="text-blue-600">hello@fuelupconcepts.ca</p></div>
+              <div><p class="text-sm font-medium text-gray-700">Partnerships</p><p class="text-blue-600">partnerships@fuelupconcepts.ca</p></div>
+              <div><p class="text-sm font-medium text-gray-700">Bookings</p><p class="text-blue-600">bookings@fuelupconcepts.ca</p></div>
+            </div>
+            <div class="mt-8 pt-6 border-t border-gray-200">
+              <p class="text-sm text-gray-600">Kitimat, BC, Canada</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-50 border-t border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="md:col-span-2">
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">FuelUp Concepts Ltd.</h3>
+          <p class="text-gray-600 mb-4">Local service brands across Food, Tech & Events.</p>
+          <p class="text-sm text-gray-500">Kitimat, BC, Canada</p>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-900 mb-4">Quick Links</h4>
+          <ul class="space-y-2">
+            <li><button data-nav="home" class="text-gray-600 hover:text-blue-600 text-sm">Home</button></li>
+            <li><button data-nav="food" class="text-gray-600 hover:text-blue-600 text-sm">Food</button></li>
+            <li><button data-nav="tech" class="text-gray-600 hover:text-blue-600 text-sm">Tech</button></li>
+            <li><button data-nav="events" class="text-gray-600 hover:text-blue-600 text-sm">Events</button></li>
+            <li><button data-nav="about" class="text-gray-600 hover:text-blue-600 text-sm">About</button></li>
+            <li><button data-nav="contact" class="text-gray-600 hover:text-blue-600 text-sm">Contact</button></li>
+            <li><button data-nav="restaurant-partners" class="text-gray-600 hover:text-blue-600 text-sm">Restaurant Partners</button></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-900 mb-4">Contact</h4>
+          <div class="space-y-2 text-sm text-gray-600">
+            <p>hello@fuelupconcepts.ca</p>
+            <p>partnerships@fuelupconcepts.ca</p>
+            <p>bookings@fuelupconcepts.ca</p>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-200 mt-8 pt-8 text-center text-sm text-gray-500">
+        <p>&copy; <span id="year"></span> FuelUp Concepts Ltd. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS: navigation + Formspree fetch + toast -->
+  <script>
+    const NAV_SECTIONS = ["home","food","restaurant-partners","tech","events","about","contact"];
+    const forms = {
+      partner: { id: "partner-form", endpoint: "https://formspree.io/f/myzdnvay" },
+      contactHome: { id: "contact-form", endpoint: "https://formspree.io/f/meolrwqq" },
+      contactTech: { id: "contact-form-tech", endpoint: "https://formspree.io/f/meolrwqq" },
+      contactPage: { id: "contact-form-page", endpoint: "https://formspree.io/f/meolrwqq" }
+    };
+
+    function showToast(ok, msg){
+      const el = document.getElementById('toast');
+      el.className = 'toast max-w-md w-full p-4 rounded-lg shadow-lg ' + (ok ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800');
+      el.textContent = msg;
+      el.classList.remove('hidden-section');
+      clearTimeout(el._t);
+      el._t = setTimeout(()=> el.classList.add('hidden-section'), 4500);
+    }
+
+    function showSection(id){
+      NAV_SECTIONS.forEach(s=>{
+        const el = document.getElementById(s);
+        if(!el) return;
+        if(s === id){ el.classList.remove('hidden-section'); window.scrollTo(0,0); }
+        else { el.classList.add('hidden-section'); }
+      });
+      // maintain URL hash (optional)
+      if (location.hash.replace('#','') !== id) history.replaceState(null,'', '#'+id);
+    }
+
+    // nav buttons
+    document.querySelectorAll('[data-nav]').forEach(btn=>{
+      btn.addEventListener('click', ()=> showSection(btn.getAttribute('data-nav')));
+    });
+
+    // initial section: hash or home
+    const start = (location.hash || '#home').replace('#','');
+    showSection(NAV_SECTIONS.includes(start) ? start : 'home');
+
+    // footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Hook up forms to Formspree via fetch (to stay on page and show toast)
+    async function submitViaFormspree(form, endpoint){
+      const honeypot = form.querySelector('input[name="_gotcha"]');
+      if (honeypot && honeypot.value) return; // bot
+      const data = new FormData(form);
+      try{
+        const res = await fetch(endpoint, { method:'POST', body:data, headers:{ 'Accept':'application/json' }});
+        if(res.ok){
+          showToast(true, 'Thanks! We’ll get back to you shortly.');
+          form.reset();
+        }else{
+          showToast(false, 'Submission failed. Please try again.');
+        }
+      }catch{
+        showToast(false, 'Network error. Please try again.');
+      }
+    }
+
+    Object.values(forms).forEach(({id, endpoint})=>{
+      const f = document.getElementById(id);
+      if(!f) return;
+      f.addEventListener('submit', (e)=>{ e.preventDefault(); submitViaFormspree(f, endpoint); });
+    });
+  </script>
+</body>
 </html>
