@@ -15,7 +15,6 @@
 <body class="bg-white text-gray-900">
   <div id="root"></div>
 
-  <!-- IMPORTANT: data-presets="react" and NO HTML comments inside JSX -->
   <script type="text/babel" data-presets="react">
     const { useState, useEffect } = React;
 
@@ -26,11 +25,34 @@
       const [submitStatus, setSubmitStatus] = useState(null);
       const [menuFile, setMenuFile] = useState(null);
 
+      // --- NAV / HASH SUPPORT ---
       const navigateTo = (page) => {
         setCurrentPage(page);
-        window.scrollTo(0, 0);
+        // also set hash for partners so QR / links work
+        if (page === 'restaurant-partners') {
+          history.replaceState(null, '', '#restaurant-partners');
+          setTimeout(() => {
+            const el = document.getElementById('restaurant-partners');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 0);
+        } else {
+          history.replaceState(null, '', ' ');
+          window.scrollTo(0, 0);
+        }
       };
 
+      // Jump to partners if URL has #restaurant-partners on first load
+      useEffect(() => {
+        if (window.location.hash === '#restaurant-partners') {
+          setCurrentPage('restaurant-partners');
+          setTimeout(() => {
+            const el = document.getElementById('restaurant-partners');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 0);
+        }
+      }, []);
+
+      // --- FORMS ---
       const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
@@ -50,97 +72,73 @@
         return Object.keys(errors).length === 0;
       };
 
-     const handleSubmitPartnerForm = async (e) => {
-  e.preventDefault();
+      // Formspree — Restaurant Partner form
+      const handleSubmitPartnerForm = async (e) => {
+        e.preventDefault();
+        if (!validateForm()) return;
 
-  if (!validateForm()) return;
+        const formEl = e.target;
+        // honeypot check (field is in the form markup)
+        if (formEl.querySelector('input[name="_gotcha"]')?.value) return;
 
-  const formEl = e.target;
+        const data = new FormData(formEl);
+        data.append("_subject", `Restaurant Application — ${formData.restaurantName || ""}`);
 
-  <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-  if (formEl.querySelector('input[name="_gotcha"]')?.value) {
-    return; // bot filled the hidden field — ignore
-  }
+        try {
+          const res = await fetch("https://formspree.io/f/myzdnvay", {
+            method: "POST",
+            body: data,
+            headers: { "Accept": "application/json" }
+          });
 
-  const data = new FormData(formEl);
-  // Helpful meta for your inbox subject line
-  data.append("_subject", `Restaurant Application — ${formData.restaurantName || ""}`);
+          if (res.ok) {
+            setSubmitStatus({ success: true, message: "Thanks — we’ll review and contact you within 1 business day." });
+            formEl.reset();
+            setFormData({});
+            setMenuFile(null);
+          } else {
+            setSubmitStatus({ success: false, message: "Submission failed. Please try again." });
+          }
+        } catch {
+          setSubmitStatus({ success: false, message: "Network error. Please try again." });
+        }
+      };
 
-  try {
-    const res = await fetch("https://formspree.io/f/myzdnvay", {
-      method: "POST",
-      body: data,
-      headers: { "Accept": "application/json" }
-    });
-
-    if (res.ok) {
-      setSubmitStatus({
-        success: true,
-        message: "Thanks — we’ll review and contact you within 1 business day."
-      });
-      formEl.reset();
-      setFormData({});
-      setMenuFile(null);
-    } else {
-      setSubmitStatus({
-        success: false,
-        message: "Submission failed. Please try again."
-      });
-    }
-  } catch {
-    setSubmitStatus({
-      success: false,
-      message: "Network error. Please try again."
-    });
-  }
-};
-
+      // Formspree — General Contact form
       const handleSubmitContactForm = async (e) => {
-  e.preventDefault();
-  const formEl = e.target;
+        e.preventDefault();
+        const formEl = e.target;
+        if (formEl.querySelector('input[name="_gotcha"]')?.value) return;
 
- <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-  if (formEl.querySelector('input[name="_gotcha"]')?.value) {
-    return;
-  }
+        const data = new FormData(formEl);
+        data.append("_subject", "Website Contact");
 
-  const data = new FormData(formEl);
-  data.append("_subject", "Website Contact");
+        try {
+          const res = await fetch("https://formspree.io/f/meolrwqq", {
+            method: "POST",
+            body: data,
+            headers: { "Accept": "application/json" }
+          });
 
-  try {
-    const res = await fetch("https://formspree.io/f/meolrwqq", {
-      method: "POST",
-      body: data,
-      headers: { "Accept": "application/json" }
-    });
+          if (res.ok) {
+            setSubmitStatus({ success: true, message: "Thank you for your message. We will respond shortly." });
+            formEl.reset();
+          } else {
+            setSubmitStatus({ success: false, message: "Submission failed. Please try again." });
+          }
+        } catch {
+          setSubmitStatus({ success: false, message: "Network error. Please try again." });
+        }
+      };
 
-    if (res.ok) {
-      setSubmitStatus({
-        success: true,
-        message: "Thank you for your message. We will respond shortly."
-      });
-      formEl.reset();
-    } else {
-      setSubmitStatus({
-        success: false,
-        message: "Submission failed. Please try again."
-      });
-    }
-  } catch {
-    setSubmitStatus({
-      success: false,
-      message: "Network error. Please try again."
-    });
-  }
-};
-
-
+      // Auto-clear toast
       useEffect(() => {
         if (!submitStatus) return;
         const t = setTimeout(() => setSubmitStatus(null), 5000);
         return () => clearTimeout(t);
       }, [submitStatus]);
 
+      // --- UI ---
       const Navigation = () => (
         <nav className="bg-white shadow-sm sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -164,6 +162,11 @@
                       {item.name}
                     </button>
                   ))}
+                  <button
+                    onClick={() => navigateTo('restaurant-partners')}
+                    className={`${currentPage === 'restaurant-partners' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-700 hover:text-blue-600'} px-3 py-2 text-sm font-medium transition-colors duration-200`}>
+                    Restaurant Partners
+                  </button>
                 </div>
               </div>
             </div>
@@ -183,15 +186,22 @@
               <div>
                 <h4 className="font-semibold text-gray-900 mb-4">Quick Links</h4>
                 <ul className="space-y-2">
-                  {['Home','Food','Tech','Events','About','Contact','Restaurant Partners'].map((link) => (
+                  {['Home','Food','Tech','Events','About','Contact'].map((link) => (
                     <li key={link}>
                       <button
-                        onClick={() => navigateTo(link.toLowerCase().replace(' ', '-').replace('partners', 'restaurant-partners'))}
+                        onClick={() => navigateTo(link.toLowerCase())}
                         className="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">
                         {link}
                       </button>
                     </li>
                   ))}
+                  <li>
+                    <button
+                      onClick={() => navigateTo('restaurant-partners')}
+                      className="text-gray-600 hover:text-blue-600 text-sm transition-colors duration-200">
+                      Restaurant Partners
+                    </button>
+                  </li>
                 </ul>
               </div>
               <div>
@@ -228,16 +238,15 @@
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium">{submitStatus.message}</p>
-                {submitStatus.applicationId && <p className="mt-1 text-sm opacity-90">Application ID: {submitStatus.applicationId}</p>}
               </div>
             </div>
           </div>
         );
       };
 
+      // --- PAGES ---
       const HomePage = () => (
         <div className="min-h-screen">
-          {/* Hero */}
           <section className="bg-white py-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Local service brands, built to scale.</h1>
@@ -249,7 +258,6 @@
             </div>
           </section>
 
-          {/* Our Verticals */}
           <section id="verticals" className="bg-gray-50 py-20">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Our Verticals</h2>
@@ -268,7 +276,6 @@
             </div>
           </section>
 
-          {/* CTA Band */}
           <section className="bg-blue-600 py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <h2 className="text-3xl font-bold text-white mb-6">Restaurant? Partner with FuelUp Meals</h2>
@@ -276,7 +283,6 @@
             </div>
           </section>
 
-          {/* FAQ */}
           <section className="bg-white py-20">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Frequently Asked Questions</h2>
@@ -295,11 +301,12 @@
             </div>
           </section>
 
-          {/* Contact Form */}
           <section className="bg-gray-50 py-20">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
               <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Get in Touch</h2>
               <form onSubmit={handleSubmitContactForm} className="bg-white p-8 rounded-lg shadow-sm">
+                <!-- honeypot -->
+                <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
@@ -326,7 +333,7 @@
       );
 
       const FoodPage = () => (
-        <div id="restaurant-partners" className="min-h-screen bg-white">
+        <div className="min-h-screen bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <h1 className="text-4xl font-bold text-gray-900 mb-8">Food</h1>
             <div className="bg-gray-50 p-8 rounded-lg mb-12">
@@ -367,11 +374,7 @@
       );
 
       const RestaurantPartnersPage = () => (
-import { useRef } from "react";
-
-const App = () => {
-  const restaurantRef = useRef(null);       
- <div id="restaurant-partners" className="min-h-screen bg-white">
+        <div id="restaurant-partners" className="min-h-screen bg-white">
           <section className="py-20 bg-gradient-to-br from-blue-50 to-white">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -482,19 +485,24 @@ const App = () => {
             <div id="apply-form">
               <h2 className="text-3xl font-bold text-gray-900 mb-8">Apply to Partner</h2>
               <form onSubmit={handleSubmitPartnerForm} className="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
-                {/* Example minimal fields (full form is on Home) */}
+                <!-- honeypot -->
+                <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Restaurant Name *</label>
                     <input type="text" name="restaurantName" value={formData.restaurantName || ''} onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.restaurantName ? 'border-red-500' : 'border-gray-300'}`}/>
+                    {formErrors.restaurantName && <p className="mt-1 text-sm text-red-600">{formErrors.restaurantName}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Contact Person *</label>
                     <input type="text" name="contactName" value={formData.contactName || ''} onChange={handleInputChange}
-                      className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+                      className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${formErrors.contactName ? 'border-red-500' : 'border-gray-300'}`}/>
+                    {formErrors.contactName && <p className="mt-1 text-sm text-red-600">{formErrors.contactName}</p>}
                   </div>
                 </div>
+
                 <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200">Send Application</button>
               </form>
             </div>
@@ -528,6 +536,8 @@ const App = () => {
             <div>
               <h3 className="text-xl font-semibold text-gray-900 mb-6">Stay Updated</h3>
               <form onSubmit={handleSubmitContactForm} className="bg-white p-8 rounded-lg shadow-sm max-w-md">
+                <!-- honeypot -->
+                <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
                 <div className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
@@ -539,7 +549,7 @@ const App = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
-                    <input type="text" name="company" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"/>
+                    <input type="text" name="company" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus-border-transparent"/>
                   </div>
                   <button type="submit" className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors duration-200 w-full">Get Updates</button>
                 </div>
@@ -605,6 +615,8 @@ const App = () => {
               <div>
                 <h2 className="text-2xl font-semibold text-gray-900 mb-6">Send us a message</h2>
                 <form onSubmit={handleSubmitContactForm} className="bg-white p-8 rounded-lg shadow-sm">
+                  <!-- honeypot -->
+                  <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
