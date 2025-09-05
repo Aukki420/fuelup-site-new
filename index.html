@@ -71,6 +71,7 @@ textarea:focus, textarea:focus-visible{
   box-shadow:none !important;
   outline:2px solid rgba(0,0,0,0.12) !important; outline-offset:2px !important;
 }
+    <style>
   /* Force wide 3-up layout for Food → How it works */
   #food-how .grid {
     display: grid !important;
@@ -93,6 +94,7 @@ textarea:focus, textarea:focus-visible{
       grid-template-columns: 1fr !important;
     }
   }
+</style>
 
 </style>
 
@@ -331,64 +333,56 @@ textarea:focus, textarea:focus-visible{
     </div>
   </div>
 </div>
-      
- <!-- Food · How it works -->
-<section id="food-how" class="mt-12 md:mt-16">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="rounded-2xl border border-gray-200 p-8 md:p-10" style="background-color:#fff6ea">
-      <h3 class="text-2xl font-extrabold text-gray-900 mb-8 text-center">
-        How FuelUp Food Works
-      </h3>
+ <!-- Food · How it works (TEST)-->
+<div id="food-how" class="mt-12 md:mt-16">
+ <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="rounded-2xl border border-gray-200 p-6 md:p-8" style="background-color:#fff6ea">
+      <h3 class="text-2xl font-extrabold text-gray-900 mb-6 text-center">How FuelUp Food Works</h3>
 
-      <!-- Desktop: 3 columns · Mobile: 1 column -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch">
+      <!-- 1 column on mobile, 3 columns on desktop -->
+     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
         <!-- 1 -->
-        <div class="rounded-2xl border border-yellow-200 bg-white p-6 flex items-center gap-6 h-full">
-          <div class="flex-none h-12 w-12 rounded-full flex items-center justify-center text-white font-extrabold"
-               style="background-image:linear-gradient(135deg,#f97316 0%,#fde047 100%);">
-            1
+       <div class="rounded-2xl border border-yellow-200 bg-white p-6 text-center shadow-sm h-full flex flex-col">
+          <div class="mx-auto mb-3 h-10 w-10 rounded-full flex items-center justify-center"
+               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">
+            <span class="font-extrabold text-white">1</span>
           </div>
-          <div>
-            <div class="font-bold text-gray-900">Standardize</div>
-            <p class="mt-1 text-sm text-gray-700">
-              We define FuelUp-style boxes and SOPs for consistency.
-            </p>
-          </div>
+          <div class="font-semibold text-gray-900">Standardize</div>
+          <p class="mt-2 text-sm text-gray-700">
+            We define FuelUp-style boxes and SOPs for consistency.
+          </p>
         </div>
 
         <!-- 2 -->
-        <div class="rounded-2xl border border-yellow-200 bg-white p-6 flex items-center gap-6 h-full">
-          <div class="flex-none h-12 w-12 rounded-full flex items-center justify-center text-white font-extrabold"
-               style="background-image:linear-gradient(135deg,#f97316 0%,#fde047 100%);">
-            2
+<div class="rounded-2xl border border-yellow-200 bg-white p-6 text-center shadow-sm h-full flex flex-col">
+          <div class="mx-auto mb-3 h-10 w-10 rounded-full flex items-center justify-center"
+               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">
+            <span class="font-extrabold text-white">2</span>
           </div>
-          <div>
-            <div class="font-bold text-gray-900">Pre-Sell</div>
-            <p class="mt-1 text-sm text-gray-700">
-              Customers buy passes; we schedule weekday orders.
-            </p>
-          </div>
+          <div class="font-semibold text-gray-900">Pre-Sell</div>
+          <p class="mt-2 text-sm text-gray-700">
+            Customers buy passes; we schedule weekday orders.
+          </p>
         </div>
 
         <!-- 3 -->
-        <div class="rounded-2xl border border-yellow-200 bg-white p-6 flex items-center gap-6 h-full">
-          <div class="flex-none h-12 w-12 rounded-full flex items-center justify-center text-white font-extrabold"
-               style="background-image:linear-gradient(135deg,#f97316 0%,#fde047 100%);">
-            3
+<div class="rounded-2xl border border-yellow-200 bg-white p-6 text-center shadow-sm h-full flex flex-col">
+          <div class="mx-auto mb-3 h-10 w-10 rounded-full flex items-center justify-center"
+               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">
+            <span class="font-extrabold text-white">3</span>
           </div>
-          <div>
-            <div class="font-bold text-gray-900">Fulfill</div>
-            <p class="mt-1 text-sm text-gray-700">
-              Restaurants prep; FuelUp handles pickups &amp; service.
-            </p>
-          </div>
+          <div class="font-semibold text-gray-900">Fulfill</div>
+          <p class="mt-2 text-sm text-gray-700">
+            Restaurants prep; FuelUp handles pickups & service.
+          </p>
         </div>
-      </div>
-    </div>
-  </div>
+      </div> <!-- /grid -->
+    </div>   <!-- /rounded container -->
+  </div>     <!-- /max-w wrapper -->
+</div>       <!-- /food-how -->
+
+
 </section>
-
-
   <!-- RESTAURANT PARTNERS -->
   <section id="restaurant-partners" class="min-h-screen hidden-section">
     <!-- Hero -->
