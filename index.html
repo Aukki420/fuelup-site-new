@@ -331,69 +331,63 @@ textarea:focus, textarea:focus-visible{
     </div>
   </div>
 </div>
- <!-- Food · How it works (inline styles – guaranteed) -->
+      
+ <!-- Food · How it works -->
 <section id="food-how" class="mt-12 md:mt-16">
-  <div style="max-width:1200px;margin:0 auto;padding:0 16px;">
-    <div style="background:#fff6ea;border:1px solid #e5e7eb;border-radius:16px;padding:32px;">
-      <h3 style="font-size:24px;font-weight:800;color:#111827;margin:0 0 24px;text-align:center">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="rounded-2xl border border-gray-200 p-8 md:p-10" style="background-color:#fff6ea">
+      <h3 class="text-2xl font-extrabold text-gray-900 mb-8 text-center">
         How FuelUp Food Works
       </h3>
 
-      <!-- desktop: 3 columns, mobile: 1 column -->
-      <div id="fu-grid"
-           style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;align-items:stretch;">
+      <!-- Desktop: 3 columns · Mobile: 1 column -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch">
         <!-- 1 -->
-        <div style="background:#ffffff;border:1px solid #fef08a;border-radius:16px;padding:24px;
-                    display:flex;align-items:center;gap:24px;height:100%;">
-          <div style="flex:none;height:48px;width:48px;border-radius:9999px;display:flex;align-items:center;
-                      justify-content:center;background:linear-gradient(135deg,#f97316 0%,#fde047 100%);
-                      color:#fff;font-weight:800;">1</div>
+        <div class="rounded-2xl border border-yellow-200 bg-white p-6 flex items-center gap-6 h-full">
+          <div class="flex-none h-12 w-12 rounded-full flex items-center justify-center text-white font-extrabold"
+               style="background-image:linear-gradient(135deg,#f97316 0%,#fde047 100%);">
+            1
+          </div>
           <div>
-            <div style="font-weight:700;color:#111827;">Standardize</div>
-            <p style="margin:6px 0 0;font-size:14px;color:#374151;">
+            <div class="font-bold text-gray-900">Standardize</div>
+            <p class="mt-1 text-sm text-gray-700">
               We define FuelUp-style boxes and SOPs for consistency.
             </p>
           </div>
         </div>
 
         <!-- 2 -->
-        <div style="background:#ffffff;border:1px solid #fef08a;border-radius:16px;padding:24px;
-                    display:flex;align-items:center;gap:24px;height:100%;">
-          <div style="flex:none;height:48px;width:48px;border-radius:9999px;display:flex;align-items:center;
-                      justify-content:center;background:linear-gradient(135deg,#f97316 0%,#fde047 100%);
-                      color:#fff;font-weight:800;">2</div>
+        <div class="rounded-2xl border border-yellow-200 bg-white p-6 flex items-center gap-6 h-full">
+          <div class="flex-none h-12 w-12 rounded-full flex items-center justify-center text-white font-extrabold"
+               style="background-image:linear-gradient(135deg,#f97316 0%,#fde047 100%);">
+            2
+          </div>
           <div>
-            <div style="font-weight:700;color:#111827;">Pre-Sell</div>
-            <p style="margin:6px 0 0;font-size:14px;color:#374151;">
+            <div class="font-bold text-gray-900">Pre-Sell</div>
+            <p class="mt-1 text-sm text-gray-700">
               Customers buy passes; we schedule weekday orders.
             </p>
           </div>
         </div>
 
         <!-- 3 -->
-        <div style="background:#ffffff;border:1px solid #fef08a;border-radius:16px;padding:24px;
-                    display:flex;align-items:center;gap:24px;height:100%;">
-          <div style="flex:none;height:48px;width:48px;border-radius:9999px;display:flex;align-items:center;
-                      justify-content:center;background:linear-gradient(135deg,#f97316 0%,#fde047 100%);
-                      color:#fff;font-weight:800;">3</div>
+        <div class="rounded-2xl border border-yellow-200 bg-white p-6 flex items-center gap-6 h-full">
+          <div class="flex-none h-12 w-12 rounded-full flex items-center justify-center text-white font-extrabold"
+               style="background-image:linear-gradient(135deg,#f97316 0%,#fde047 100%);">
+            3
+          </div>
           <div>
-            <div style="font-weight:700;color:#111827;">Fulfill</div>
-            <p style="margin:6px 0 0;font-size:14px;color:#374151;">
+            <div class="font-bold text-gray-900">Fulfill</div>
+            <p class="mt-1 text-sm text-gray-700">
               Restaurants prep; FuelUp handles pickups &amp; service.
             </p>
           </div>
         </div>
       </div>
-
-      <!-- tiny inline media query for mobile stacking -->
-      <style>
-        @media (max-width: 767.98px) {
-          #fu-grid { grid-template-columns: 1fr !important; }
-        }
-      </style>
     </div>
   </div>
 </section>
+
 
   <!-- RESTAURANT PARTNERS -->
   <section id="restaurant-partners" class="min-h-screen hidden-section">
