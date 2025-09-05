@@ -9,6 +9,9 @@
   <style>
   .hidden-section{display:none}
   .toast{position:fixed;top:16px;right:16px;z-index:1000}
+  #main-nav.hidden {
+  display: none !important;
+}
 
  /* Custom nav active style */
     
@@ -103,7 +106,7 @@ textarea:focus, textarea:focus-visible{
   <div id="toast" class="toast hidden-section max-w-md w-full p-4 rounded-lg shadow-lg"></div>
 
 <!-- NAV -->
-<nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
+<nav id="main-nav" class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
 
     <!-- Brand → goes Home -->
@@ -113,7 +116,7 @@ textarea:focus, textarea:focus-visible{
   <img src="fuelup-logo-graphite-800.png"
        srcset="fuelup-logo-graphite-800.png 1x, fuelup-logo-graphite-1600.png 2x"
        alt="FuelUp Concepts Ltd."
-       class="h-12 md:h-14 w-auto pointer-events-none" />
+       class="h-14 md:h-16 w-auto pointer-events-none" />
 </a>
     <!-- Desktop links -->
     <div class="hidden md:flex items-center gap-2">
@@ -930,6 +933,16 @@ textarea:focus, textarea:focus-visible{
     if (!target) return;
 
     target.classList.remove(HIDDEN);
+      // Toggle nav visibility
+  const nav = document.getElementById("main-nav");
+  if (nav) {
+    if (targetId === "home") {
+      nav.classList.add("hidden");
+    } else {
+      nav.classList.remove("hidden");
+    }
+  }
+
 
     // Update hash unless this came from a hashchange event
     if (!fromHashChange) {
