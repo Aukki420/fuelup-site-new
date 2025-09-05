@@ -11,6 +11,10 @@
   .toast{position:fixed;top:16px;right:16px;z-index:1000}
 
  /* Custom nav active style */
+/* lighter orange → yellow frame for cards */
+.grad-frame{
+  background-image: linear-gradient(135deg,#f97316 0%, #fde047 100%);
+}
 
 /* Hover stays lighter than active */
 .nav-link:hover {
@@ -309,63 +313,63 @@ textarea:focus, textarea:focus-visible{
           </div>
         </div>
         <div class="px-6 pb-6">
-          <a href="https://fuelupmeals.ca" target="_blank" rel="noopener"
-   class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient"
+         <a href="https://fuelupmeals.ca" target="_blank" rel="noopener"
+   class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient">
   View Customer Site
 </a>
-
         </div>
       </div>
 
-      <!-- Restaurant Partners (onboarding) -->
-      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition">
-        <div class="p-6">
-          <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
-            For Restaurants
-          </div>
-          <h3 class="text-xl font-extrabold text-gray-900">Restaurant Partners (Lunchboxes)</h3>
-          <p class="mt-2 text-gray-700 text-sm">
-            Join as a fulfillment partner. We assign 3–5 boxes from your menu, do pickups, and pay weekly.
-          </p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">No delivery</span>
-            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Weekly payouts</span>
-          </div>
-        </div>
-        <div class="px-6 pb-6">
-          <button data-nav="restaurant-partners"
-                  class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
-                  style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-            Restaurant Onboarding
-          </button>
-        </div>
+      <!-- Restaurant Partners (onboarding) — gradient frame -->
+<div class="group rounded-2xl p-[1px] shadow-sm hover:shadow-md transition grad-frame">
+  <div class="bg-white rounded-2xl">
+    <div class="p-6">
+      <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
+        For Restaurants
       </div>
-
-      <!-- FuelUp Kitchen (cloud/collab kitchen) -->
-      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition">
-        <div class="p-6">
-          <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
-            Operations
-          </div>
-          <h3 class="text-xl font-extrabold text-gray-900">FuelUp Kitchen</h3>
-          <p class="mt-2 text-gray-700 text-sm">
-            Cloud-kitchen collaboration and standardized prep. SOPs, labeling, and QA for consistent output.
-          </p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Standardized boxes</span>
-            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">SOP-driven</span>
-          </div>
-        </div>
-        <div class="px-6 pb-6">
-          <a href="#" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50">
-            Learn More
-          </a>
-        </div>
+      <h3 class="text-xl font-extrabold text-gray-900">Restaurant Partners (Lunchboxes)</h3>
+      <p class="mt-2 text-gray-700 text-sm">
+        Join as a fulfillment partner. We assign 3–5 boxes from your menu, do pickups, and pay weekly.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">No delivery</span>
+        <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Weekly payouts</span>
       </div>
-
     </div>
-
+    <div class="px-6 pb-6">
+      <button data-nav="restaurant-partners"
+              class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient">
+        Restaurant Onboarding
+      </button>
+    </div>
   </div>
+</div>
+
+     <!-- FuelUp Kitchen — gradient frame (light) -->
+<div class="group rounded-2xl p-[1px] shadow-sm hover:shadow-md transition grad-frame">
+  <div class="bg-white rounded-2xl">
+    <div class="p-6">
+      <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
+        Operations
+      </div>
+      <h3 class="text-xl font-extrabold text-gray-900">FuelUp Kitchen</h3>
+      <p class="mt-2 text-gray-700 text-sm">
+        Cloud-kitchen collaboration and standardized prep. SOPs, labeling, and QA for consistent output.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Standardized boxes</span>
+        <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">SOP-driven</span>
+      </div>
+    </div>
+    <div class="px-6 pb-6">
+      <a href="#"
+         class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300">
+        Learn More
+      </a>
+    </div>
+  </div>
+</div>
+
    <!-- Food · How it works -->
 <div id="food-how" class="mt-12 md:mt-16">
   <div class="rounded-2xl border border-gray-200 p-6 md:p-8" style="background-color:#fff6ea">
