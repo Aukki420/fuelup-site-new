@@ -7,51 +7,66 @@
   <!-- TailwindCSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .hidden-section{display:none}
-    .toast{position:fixed;top:16px;right:16px;z-index:1000}
-  </style>
+  .hidden-section{display:none}
+  .toast{position:fixed;top:16px;right:16px;z-index:1000}
+
+  /* Custom nav active style */
+  .nav-link.ring-2 {
+    box-shadow: none !important;
+    background-color: rgba(0,0,0,0.06) !important; /* light gray highlight */
+    color: #111827 !important; /* gray-900 */
+    border-radius: 0.5rem; /* match rounded buttons */
+  }
+</style>
+
 </head>
 <body class="bg-white text-gray-900">
   <!-- Toast -->
   <div id="toast" class="toast hidden-section max-w-md w-full p-4 rounded-lg shadow-lg"></div>
 
-  <!-- NAV -->
+<!-- NAV -->
 <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-    <div class="flex items-center">
-      <button data-nav="home" class="text-base md:text-lg font-bold text-gray-900">
-  FuelUp Concepts Ltd.
-</button>
-    </div>
-    <!-- desktop links -->
+
+    <!-- Brand → goes Home -->
+    <button data-nav="home" class="flex items-center gap-2" aria-label="FuelUp Concepts Ltd. (Home)">
+      <img src="FuelUp_Concepts_graphite_Primary.png" alt="FuelUp Concepts Ltd."
+           class="h-8 md:h-9 w-auto" />
+    </button>
+
+    <!-- Desktop links -->
     <div class="hidden md:flex items-center gap-2">
-      <button data-nav="home" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Home</button>
-      <button data-nav="food" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Food</button>
-      <button data-nav="restaurant-partners" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Restaurant Partners</button>
-      <button data-nav="tech" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Tech</button>
-      <button data-nav="events" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Events</button>
-      <button data-nav="about" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">About</button>
-      <button data-nav="contact" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Contact</button>
+      <button data-nav="home" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Home</button>
+      <button data-nav="food" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Food</button>
+      <button data-nav="restaurant-partners" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Restaurant Partners</button>
+      <button data-nav="tech" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Tech</button>
+      <button data-nav="events" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Events</button>
+      <button data-nav="about" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">About</button>
+      <button data-nav="contact" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Contact</button>
     </div>
 
-    <!-- mobile menu button (optional) -->
-    <button id="nav-toggle" class="md:hidden p-2 rounded-md border border-gray-200 text-gray-700" aria-label="Menu">☰</button>
+    <!-- Mobile hamburger -->
+    <button id="nav-toggle" class="md:hidden p-2 rounded-md border border-gray-200 text-gray-700" aria-label="Menu">
+      <!-- simple menu icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+      </svg>
+    </button>
   </div>
 
-  <!-- mobile links (optional) -->
-  <div id="nav-mobile" class="md:hidden hidden border-t border-gray-200">
+  <!-- Mobile tray -->
+  <div id="nav-mobile" class="md:hidden hidden border-t border-gray-200 bg-white/95 backdrop-blur">
     <div class="px-4 py-2 flex flex-col">
-      <button data-nav="home" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Home</button>
-      <button data-nav="food" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Food</button>
-      <button data-nav="restaurant-partners" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Restaurant Partners</button>
-      <button data-nav="tech" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Tech</button>
-      <button data-nav="events" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Events</button>
-      <button data-nav="about" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">About</button>
-      <button data-nav="contact" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Contact</button>
+      <button data-nav="home" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Home</button>
+      <button data-nav="food" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Food</button>
+      <button data-nav="restaurant-partners" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Restaurant Partners</button>
+      <button data-nav="tech" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Tech</button>
+      <button data-nav="events" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Events</button>
+      <button data-nav="about" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">About</button>
+      <button data-nav="contact" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Contact</button>
     </div>
   </div>
 </nav>
-
 
   <!-- HOME -->
   <section id="home" class="min-h-screen">
@@ -903,6 +918,19 @@
   });
 
   resolveInitial();
+})();
+</script>
+        <script>
+(function () {
+  const toggle = document.getElementById("nav-toggle");
+  const tray   = document.getElementById("nav-mobile");
+  if (!toggle || !tray) return;
+
+  toggle.addEventListener("click", () => tray.classList.toggle("hidden"));
+  tray.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-nav]");
+    if (btn) tray.classList.add("hidden");
+  });
 })();
 </script>
 </body>
