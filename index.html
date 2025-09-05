@@ -11,13 +11,6 @@
   .toast{position:fixed;top:16px;right:16px;z-index:1000}
 
  /* Custom nav active style */
-.nav-link.ring-2 {
-  box-shadow: none !important;
-  border: none !important;                /* removes red border */
-  background-color: #f3f4f6 !important;   /* Tailwind gray-100 */
-  color: #111827 !important;              /* dark text */
-  border-radius: 0.5rem;
-}
 
 /* Hover stays lighter than active */
 .nav-link:hover {
@@ -886,8 +879,8 @@
     // Active state on nav
     navLinks.forEach(btn => {
       const isActive = btn.getAttribute("data-nav") === targetId;
-      btn.classList.toggle("ring-2", isActive);
-      btn.classList.toggle("ring-red-600", isActive);
+      btn.classList.toggle("bg-gray-100", isActive);   // subtle active background
+btn.classList.toggle("text-gray-900", isActive); // darker text when active
       btn.setAttribute("aria-current", isActive ? "page" : "false");
     });
 
