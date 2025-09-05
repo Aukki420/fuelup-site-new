@@ -10,13 +10,20 @@
   .hidden-section{display:none}
   .toast{position:fixed;top:16px;right:16px;z-index:1000}
 
-  /* Custom nav active style */
-  .nav-link.ring-2 {
-    box-shadow: none !important;
-    background-color: rgba(0,0,0,0.06) !important; /* light gray highlight */
-    color: #111827 !important; /* gray-900 */
-    border-radius: 0.5rem; /* match rounded buttons */
-  }
+ /* Custom nav active style */
+.nav-link.ring-2 {
+  box-shadow: none !important;
+  border: none !important;                /* removes red border */
+  background-color: #f3f4f6 !important;   /* Tailwind gray-100 */
+  color: #111827 !important;              /* dark text */
+  border-radius: 0.5rem;
+}
+
+/* Hover stays lighter than active */
+.nav-link:hover {
+  background-color: #f9fafb !important;   /* Tailwind gray-50 */
+}
+
 </style>
 
 </head>
@@ -116,7 +123,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h3 class="text-3xl font-bold text-white mb-6">Restaurant? Partner with FuelUp Meals</h3>
         <button data-nav="restaurant-partners"
-        class="px-8 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+        class="px-8 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
         style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
   Restaurant Partners (Lunchboxes)
 </button> 
@@ -216,7 +223,7 @@
         </div>
         <div class="px-6 pb-6">
           <a href="https://fuelupmeals.ca" target="_blank" rel="noopener"
-   class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+   class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
    style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
   View Customer Site
 </a>
@@ -241,7 +248,7 @@
         </div>
         <div class="px-6 pb-6">
           <button data-nav="restaurant-partners"
-                  class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+                  class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
                   style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
             Restaurant Onboarding
           </button>
@@ -342,7 +349,7 @@
       <!-- CTA buttons -->
       <div class="flex flex-wrap gap-3 mb-10">
         <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
-                class="px-7 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+                class="px-7 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
                 style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
           Join as a Restaurant Partner
         </button>
@@ -498,7 +505,7 @@
   <!-- mini CTA under steps -->
   <div class="text-center mt-10">
     <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
-            class="px-8 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+            class="px-8 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
             style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
       Start Application
     </button>
@@ -517,12 +524,12 @@
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Restaurant Name *</label>
         <input required name="restaurantName"
-               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"/>
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 focus:border-transparent"/>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Contact Person *</label>
         <input required name="contactName"
-               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"/>
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 focus:border-transparent"/>
       </div>
     </div>
 
@@ -531,17 +538,17 @@
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
         <input name="role" placeholder="Owner / Manager / Chef"
-               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"/>
+               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 focus:border-transparent"/>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Phone *</label>
         <input required name="phone" type="tel" placeholder="e.g. 555-123-4567"
-               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"/>
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 focus:border-transparent"/>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
         <input required name="email" type="email" placeholder="name@restaurant.com"
-               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"/>
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 focus:border-transparent"/>
       </div>
     </div>
 
@@ -550,7 +557,7 @@
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Best Pickup Window</label>
         <select name="pickupWindow"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent">
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 focus:border-transparent">
           <option value="11:15">11:15 AM</option>
           <option value="11:30">11:30 AM</option>
           <option value="11:45">11:45 AM</option>
@@ -560,7 +567,7 @@
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Daily Lunch Capacity *</label>
         <input required name="dailyCapacity" type="number" min="1" placeholder="Minimum 20 boxes/day"
-               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"/>
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 focus:border-transparent"/>
       </div>
     </div>
 
@@ -570,7 +577,7 @@
         Menu / Dishes You Can Do (3–5 lunch boxes) *
       </label>
       <textarea required name="menu" rows="4"
-        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"
+        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 focus:border-transparent"
         placeholder="List 3–5 dishes suited for weekday lunch (e.g., Butter Chicken + Rice + Salad)"></textarea>
     </div>
 
@@ -578,7 +585,7 @@
     <div class="mb-6">
       <label class="block text-sm font-medium text-gray-700 mb-2">Upload Menu/Photos (Optional)</label>
       <input type="file" name="menuFile" accept=".pdf,.jpg,.jpeg,.png,.txt,.doc,.docx"
-             class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"/>
+             class="w-full px-4 py-2 border rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 focus:border-transparent"/>
       <p class="mt-1 text-sm text-gray-500">Accepted: PDF, JPG, PNG, TXT, DOC, DOCX (max ~10MB)</p>
     </div>
 
@@ -586,14 +593,14 @@
     <div class="mb-8">
       <label class="block text-sm font-medium text-gray-700 mb-2">Notes</label>
       <textarea name="notes" rows="3"
-        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-transparent"
+        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 focus:border-transparent"
         placeholder="Dietary constraints, special prep notes, capacity limits"></textarea>
     </div>
 
     <!-- Actions -->
     <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
       <button
-        class="px-8 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600"
+        class="px-8 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
         style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
         Send Application
       </button>
@@ -616,7 +623,7 @@
     </div>
     <div class="flex flex-col sm:flex-row gap-3">
       <a href="mailto:hello@fuelupconcepts.ca?subject=Restaurant%20Partner%20Question"
-         class="px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:ring-2 focus:ring-red-600 text-center"
+         class="px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 text-center"
          style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
         Email Partnerships
       </a>
