@@ -11,6 +11,7 @@
   .toast{position:fixed;top:16px;right:16px;z-index:1000}
 
  /* Custom nav active style */
+    
 /* lighter orange → yellow frame for cards */
 .grad-frame{
   background-image: linear-gradient(135deg,#fdba74 0%, #fde68a 100%); 
@@ -70,6 +71,31 @@ textarea:focus, textarea:focus-visible{
   box-shadow:none !important;
   outline:2px solid rgba(0,0,0,0.12) !important; outline-offset:2px !important;
 }
+    <style>
+  /* Force wide 3-up layout for Food → How it works */
+  #food-how .grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 1.5rem !important; /* 24px */
+    align-items: stretch !important;
+  }
+
+  /* Make each card stretch evenly */
+  #food-how .rounded-2xl.border-yellow-200.bg-white {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Keep mobile stacked */
+  @media (max-width: 767.98px) {
+    #food-how .grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+
 </style>
 
 </head>
@@ -311,7 +337,7 @@ textarea:focus, textarea:focus-visible{
 <div id="food-how" class="mt-12 md:mt-16">
  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="rounded-2xl border border-gray-200 p-6 md:p-8" style="background-color:#fff6ea">
-      <h3 class="text-2xl font-extrabold text-gray-900 mb-6 text-center">How FuelUp Food Works Test</h3>
+      <h3 class="text-2xl font-extrabold text-gray-900 mb-6 text-center">How FuelUp Food Works</h3>
 
       <!-- 1 column on mobile, 3 columns on desktop -->
      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
