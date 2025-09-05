@@ -79,14 +79,13 @@ textarea:focus, textarea:focus-visible{
     gap: 1.5rem !important; /* 24px */
     align-items: stretch !important;
   }
-
-  /* Make each card stretch evenly */
-  #food-how .rounded-2xl.border-yellow-200.bg-white {
-    height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important;
-  }
+#food-how .rounded-2xl.border-yellow-200.bg-white {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  /* add this for safety */
+  min-width: 0 !important;
+}
 
   /* Keep mobile stacked */
   @media (max-width: 767.98px) {
