@@ -16,25 +16,42 @@
   <div id="toast" class="toast hidden-section max-w-md w-full p-4 rounded-lg shadow-lg"></div>
 
   <!-- NAV -->
-  <nav class="bg-white shadow-sm sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
-        <div class="flex-shrink-0 flex items-center">
-          <h1 class="text-xl font-bold text-gray-900">FuelUp Concepts Ltd.</h1>
-        </div>
-        <div class="hidden md:block">
-          <div class="ml-10 flex items-baseline space-x-8">
-            <button data-nav="home" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Home</button>
-            <button data-nav="food" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Food</button>
-            <button data-nav="tech" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Tech</button>
-            <button data-nav="events" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Events</button>
-            <button data-nav="about" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">About</button>
-            <button data-nav="contact" class="px-3 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">Contact</button>
-          </div>
-        </div>
-      </div>
+  <!-- NAV -->
+<nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+    <div class="flex items-center">
+      <h1 class="text-base md:text-lg font-bold text-gray-900">FuelUp Concepts Ltd.</h1>
     </div>
-  </nav>
+
+    <!-- desktop links -->
+    <div class="hidden md:flex items-center gap-2">
+      <button data-nav="home" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Home</button>
+      <button data-nav="food" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Food</button>
+      <button data-nav="restaurant-partners" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Restaurant Partners</button>
+      <button data-nav="tech" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Tech</button>
+      <button data-nav="events" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Events</button>
+      <button data-nav="about" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">About</button>
+      <button data-nav="contact" class="nav-link px-3 py-1.5 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Contact</button>
+    </div>
+
+    <!-- mobile menu button (optional) -->
+    <button id="nav-toggle" class="md:hidden p-2 rounded-md border border-gray-200 text-gray-700" aria-label="Menu">☰</button>
+  </div>
+
+  <!-- mobile links (optional) -->
+  <div id="nav-mobile" class="md:hidden hidden border-t border-gray-200">
+    <div class="px-4 py-2 flex flex-col">
+      <button data-nav="home" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Home</button>
+      <button data-nav="food" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Food</button>
+      <button data-nav="restaurant-partners" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Restaurant Partners</button>
+      <button data-nav="tech" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Tech</button>
+      <button data-nav="events" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Events</button>
+      <button data-nav="about" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">About</button>
+      <button data-nav="contact" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-red-700">Contact</button>
+    </div>
+  </div>
+</nav>
+
 
   <!-- HOME -->
   <section id="home" class="min-h-screen">
@@ -820,5 +837,73 @@
       f.addEventListener('submit', (e)=>{ e.preventDefault(); submitViaFormspree(f, endpoint); });
     });
   </script>
+        <script>
+// ===== Section Router =====
+(function () {
+  const SECTION_IDS = ["home","food","restaurant-partners","tech","events","about","contact"];
+  const HIDDEN = "hidden-section"; // already in your CSS
+  const navLinks = Array.from(document.querySelectorAll('[data-nav]'));
+
+  function $(id){ return document.getElementById(id); }
+
+  function showSection(targetId, fromHashChange=false) {
+    // Hide all
+    SECTION_IDS.forEach(id => { const el = $(id); if (el) el.classList.add(HIDDEN); });
+    // Show target
+    const target = $(targetId) || $("home");
+    if (!target) return;
+
+    target.classList.remove(HIDDEN);
+
+    // Update hash unless this came from a hashchange event
+    if (!fromHashChange) {
+      const newHash = "#" + targetId;
+      if (location.hash !== newHash) history.pushState(null, "", newHash);
+    }
+
+    // Active state on nav
+    navLinks.forEach(btn => {
+      const isActive = btn.getAttribute("data-nav") === targetId;
+      btn.classList.toggle("ring-2", isActive);
+      btn.classList.toggle("ring-red-600", isActive);
+      btn.setAttribute("aria-current", isActive ? "page" : "false");
+    });
+
+    // Scroll & focus for accessibility
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    // Focus the first heading inside the section if available
+    const firstHeading = target.querySelector("h1,h2,h3");
+    if (firstHeading) firstHeading.setAttribute("tabindex","-1"), firstHeading.focus({preventScroll:true});
+  }
+
+  // Wire up clicks
+  navLinks.forEach(btn => {
+    btn.addEventListener("click", () => showSection(btn.getAttribute("data-nav")));
+  });
+
+  // Handle hash on load + browser back/forward
+  function resolveInitial(){
+    const id = (location.hash || "#home").slice(1);
+    showSection(SECTION_IDS.includes(id) ? id : "home", true);
+  }
+  window.addEventListener("hashchange", () => {
+    const id = (location.hash || "#home").slice(1);
+    showSection(SECTION_IDS.includes(id) ? id : "home", true);
+  });
+
+  // Also make any anchor like <a href="#restaurant-partners"> work
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const id = a.getAttribute("href").slice(1);
+    if (SECTION_IDS.includes(id)) {
+      e.preventDefault();
+      showSection(id);
+    }
+  });
+
+  resolveInitial();
+})();
+</script>
 </body>
 </html>
