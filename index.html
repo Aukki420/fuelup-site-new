@@ -132,7 +132,7 @@ textarea:focus, textarea:focus-visible{
 
 <!-- NAV -->
  
-<nav id="main-nav" class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
+<nav id="main-nav" class="sticky top-0 z-50 relative bg-white/95 backdrop-blur border-b border-gray-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
  
     <!-- Brand → goes Home -->
@@ -156,7 +156,7 @@ textarea:focus, textarea:focus-visible{
     </div>
 
     <!-- Mobile hamburger -->
-    <button id="nav-toggle" class="md:hidden p-2 rounded-md border border-gray-200 text-gray-700" aria-label="Menu">
+<button id="nav-toggle" class="md:hidden p-2 rounded-md border border-gray-200 text-gray-700" aria-label="Menu" aria-expanded="false">
       <!-- simple menu icon -->
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -165,7 +165,7 @@ textarea:focus, textarea:focus-visible{
   </div>
 
   <!-- Mobile tray -->
-  <div id="nav-mobile" class="md:hidden hidden border-t border-gray-200 bg-white/95 backdrop-blur">
+<div id="nav-mobile" class="md:hidden hidden absolute left-0 top-full w-full z-[10000] border-t border-gray-200 bg-white/95 backdrop-blur">
     <div class="px-4 py-2 flex flex-col">
       <button data-nav="home" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Home</button>
       <button data-nav="food" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Food</button>
@@ -1056,6 +1056,29 @@ btn.classList.toggle("text-gray-900", isActive); // darker text when active
   });
   document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeMenu(); });
   window.addEventListener('hashchange', closeMenu);
+})();
+</script>
+<script>
+(function () {
+  const toggle = document.getElementById("nav-toggle");
+  const tray   = document.getElementById("nav-mobile");
+  if (!toggle || !tray) return;
+
+  function setOpen(open){
+    tray.classList.toggle("hidden", !open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  toggle.addEventListener("click", () => {
+    const open = tray.classList.contains("hidden");
+    setOpen(open);
+  });
+
+  // close tray when a nav link in the tray is tapped
+  tray.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-nav]");
+    if (btn) setOpen(false);
+  });
 })();
 </script>
 
