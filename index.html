@@ -115,14 +115,13 @@ textarea:focus, textarea:focus-visible{
   justify-content: flex-start !important;
   /* add this for safety */
   min-width: 0 !important;
+}
   /* Keep mobile stacked */
   @media (max-width: 767.98px) {
     #food-how .grid {
       grid-template-columns: 1fr !important;
     }
   }
-</style>
-
 </style>
 
 </head>
@@ -1020,38 +1019,68 @@ btn.classList.toggle("text-gray-900", isActive); // darker text when active
 (function(){
   const root = document.getElementById('meals-dd');
   if(!root) return;
+
   const btn  = root.querySelector('button[aria-controls="meals-menu"]');
   const menu = document.getElementById('meals-menu');
+  const card = root.closest('.card'); // <-- this was missing
+
+  function place() {
+    const isMobile = window.innerWidth < 768;
+    const rect = btn.getBoundingClientRect();
+
+    if (isMobile) {
+      // fixed so nothing clips it on small screens
+      menu.style.position = 'fixed';
+      const minW = Math.max(rect.width, 240);
+      menu.style.minWidth = minW + 'px';
+      // 16px viewport padding
+      const left = Math.max(16, Math.min(rect.left, window.innerWidth - minW - 16));
+      menu.style.left = left + 'px';
+      menu.style.top  = (rect.bottom + 8) + 'px';
+      menu.style.right = 'auto';
+      menu.style.zIndex = '10000';
+    } else {
+      // desktop: anchor to card
+      menu.style.position = 'absolute';
+      menu.style.left = '0';
+      menu.style.top = '';
+      menu.style.right = '';
+      menu.style.minWidth = '240px';
+      menu.style.zIndex = '';
+    }
+  }
+
+ function openMenu(){
+    menu.classList.remove('hidden');
+    btn.setAttribute('aria-expanded','true');
+    root.classList.add('dd-open');            // local lift
+    if (card) card.classList.add('dd-raise'); // raise whole card above Tech/Events
+    place();
+    window.addEventListener('scroll', place, { passive:true });
+    window.addEventListener('resize', place);
+  }
 
   function closeMenu(){
-  menu.classList.add('hidden');
-  btn.setAttribute('aria-expanded','false');
-  root.classList.remove('dd-open');  // lift off
-   if (card) card.classList.remove('dd-raise');
-}
-function openMenu(){
-  menu.classList.remove('hidden');
-  btn.setAttribute('aria-expanded','true');
-  root.classList.add('dd-open');     // lift on
-  if (card) card.classList.add('dd-raise');
-}
-
+    menu.classList.add('hidden');
+    btn.setAttribute('aria-expanded','false');
+    root.classList.remove('dd-open');
+    if (card) card.classList.remove('dd-raise');
+    window.removeEventListener('scroll', place);
+    window.removeEventListener('resize', place);
+  }
 
   btn.addEventListener('click', (e)=>{
     e.stopPropagation();
-    const open = btn.getAttribute('aria-expanded') === 'true';
-    open ? closeMenu() : openMenu();
+    const isOpen = btn.getAttribute('aria-expanded') === 'true';
+    isOpen ? closeMenu() : openMenu();
   });
 
+  // Close on outside click / ESC / section change
   document.addEventListener('click', (e)=>{
-    if(!menu.classList.contains('hidden') && !root.contains(e.target)) closeMenu();
+    if (!menu.classList.contains('hidden') && !root.contains(e.target)) closeMenu();
   });
-  document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') closeMenu(); });
-
-  menu.addEventListener('click', (e)=>{
-    const item = e.target.closest('[data-nav],a[role="menuitem"]');
-    if(item) closeMenu();
-  });
+  document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeMenu(); });
+  window.addEventListener('hashchange', closeMenu);
 })();
 </script>
 
