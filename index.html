@@ -28,8 +28,13 @@
 .dropdown .hint { font-size: .75rem; font-weight:700; padding:.125rem .5rem; border-radius:999px; border:1px solid #d1fae5; color:#065f46; background:#ecfdf5; }
 .dropdown .soon { border-color:#e5e7eb; color:#6b7280; background:#f3f4f6; }
 .dropdown .disabled { opacity:.45; pointer-events:none; }
-/* When Meals menu is open, lift its wrapper above neighbors */
+/* the card and grid will never clip the dropdown */
+.card { overflow: visible; }                 /* overrides any hidden overflow */
+#verticals .grid { overflow: visible; }      /* parent grid can’t clip children */
+
+/* Lift the menu and its wrapper when open  */
 .dd-open { position: relative; z-index: 1001; }
+
 
  /* Custom nav active style */
     
@@ -1022,48 +1027,41 @@ btn.classList.toggle("text-gray-900", isActive); // darker text when active
   resolveInitial();
 })();
 </script>
-        <script>
-(function () {
-  const toggle = document.getElementById("nav-toggle");
-  const tray   = document.getElementById("nav-mobile");
-  if (!toggle || !tray) return;
-
-  toggle.addEventListener("click", () => tray.classList.toggle("hidden"));
-  tray.addEventListener("click", (e) => {
-    const btn = e.target.closest("[data-nav]");
-    if (btn) tray.classList.add("hidden");
-  });
-})();
-</script>
 <script>
-( function closeMenu(){
-   menu.classList.add('hidden');
-   btn.setAttribute('aria-expanded','false');
-   root.classList.remove('dd-open');     // drop back to normal stacking
- }
- function openMenu(){
-   menu.classList.remove('hidden');
-  btn.setAttribute('aria-expanded','true');
-  root.classList.add('dd-open');        // lift above adjacent cards
-}
+(function(){
+  const root = document.getElementById('meals-dd');
+  if(!root) return;
+  const btn  = root.querySelector('button[aria-controls="meals-menu"]');
+  const menu = document.getElementById('meals-menu');
+
+  function closeMenu(){
+    menu.classList.add('hidden');
+    btn.setAttribute('aria-expanded','false');
+    root.classList.remove('dd-open');  // drop back to normal stacking
+  }
+  function openMenu(){
+    menu.classList.remove('hidden');
+    btn.setAttribute('aria-expanded','true');
+    root.classList.add('dd-open');     // lift above adjacent cards
+  }
+
   btn.addEventListener('click', (e)=>{
     e.stopPropagation();
     const open = btn.getAttribute('aria-expanded') === 'true';
     open ? closeMenu() : openMenu();
   });
 
-  // close on outside click / ESC
-  document.addEventListener('click', (e)=> {
+  document.addEventListener('click', (e)=>{
     if(!menu.classList.contains('hidden') && !root.contains(e.target)) closeMenu();
   });
   document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') closeMenu(); });
 
-  // close menu when a menu item navigates
   menu.addEventListener('click', (e)=>{
     const item = e.target.closest('[data-nav],a[role="menuitem"]');
     if(item) closeMenu();
   });
 })();
 </script>
+
 </body>
 </html>
