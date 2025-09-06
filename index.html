@@ -12,6 +12,22 @@
   #main-nav.hidden {
   display: none !important;
 }
+/* Vertical gradient buttons */
+.btn-meals { background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%) !important; color:#fff !important; box-shadow: 0 6px 14px rgba(220,38,38,.18); }
+.btn-tech  { background-image: linear-gradient(135deg,#4f46e5 0%, #3b82f6 100%) !important; color:#fff !important; box-shadow: 0 6px 14px rgba(79,70,229,.20); }
+.btn-events{ background-image: linear-gradient(135deg,#7c3aed 0%, #a855f7 100%) !important; color:#fff !important; box-shadow: 0 6px 14px rgba(124,58,237,.20); }
+.btn-meals:hover,.btn-tech:hover,.btn-events:hover{ transform: translateY(-1px); }
+.btn-meals,.btn-tech,.btn-events{ transition: transform .18s ease, box-shadow .18s ease; }
+
+/* Simple dropdown */
+.dropdown { position: absolute; top: 100%; left: 0; margin-top: .5rem; min-width: 240px;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: .75rem; box-shadow: 0 12px 28px rgba(0,0,0,.08); z-index: 30; }
+.dropdown a, .dropdown button { display:flex; justify-content:space-between; width:100%; text-align:left;
+  padding: .625rem .875rem; border-radius: .5rem; font-weight:600; color:#111827; }
+.dropdown a:hover, .dropdown button:hover { background:#f9fafb; }
+.dropdown .hint { font-size: .75rem; font-weight:700; padding:.125rem .5rem; border-radius:999px; border:1px solid #d1fae5; color:#065f46; background:#ecfdf5; }
+.dropdown .soon { border-color:#e5e7eb; color:#6b7280; background:#f3f4f6; }
+.dropdown .disabled { opacity:.45; pointer-events:none; }
 
  /* Custom nav active style */
     
@@ -197,35 +213,58 @@ textarea:focus, textarea:focus-visible{
           </li>
         </ul>
 
-        <div class="flex flex-col gap-2">
-          <button data-nav="food"
-                  class="px-5 py-2.5 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition">
-            Go to Meals
-          </button>
-          <button data-nav="restaurant-partners"
-                  class="px-5 py-2.5 rounded-xl font-semibold text-white shadow-md btn-gradient">
-            Restaurant Partners Onboarding
-          </button>
-        </div>
-      </div>
+       <div class="flex flex-col gap-2">
+  <!-- keep the neutral 'Go to Meals' -->
+  <button data-nav="food"
+          class="px-5 py-2.5 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition">
+    Go to Meals
+  </button>
+
+  <!-- split dropdown for Meals actions -->
+  <div class="relative" id="meals-dd">
+    <button type="button"
+            class="px-5 py-2.5 rounded-xl font-semibold shadow-md btn-meals w-full flex items-center justify-between"
+            aria-haspopup="true" aria-expanded="false" aria-controls="meals-menu">
+      Meals actions
+      <svg class="h-4 w-4 opacity-90" viewBox="0 0 20 20" fill="currentColor"><path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"/></svg>
+    </button>
+    <div id="meals-menu" class="dropdown hidden" role="menu">
+      <button data-nav="restaurant-partners" class="" role="menuitem">
+        Restaurant Onboarding
+      </button>
+      <a href="https://fuelupmeals.ca" target="_blank" rel="noopener" role="menuitem">
+        FuelUp Lunchboxes
+        <span class="hint">LIVE</span>
+      </a>
+      <button class="disabled" type="button" role="menuitem">
+        Breakfast / Dinner
+        <span class="soon">SOON</span>
+      </button>
+      <button data-nav="food" role="menuitem">
+        FuelUp Kitchen
+      </button>
+    </div>
+  </div>
+</div>
 
       <!-- Tech -->
       <div class="card card-hover p-6">
         <h3 class="text-xl font-extrabold text-gray-900 mb-1">Tech</h3>
         <p class="text-sm text-gray-700 mb-5">Apps & tools powering passes, routing, payouts, and support.</p>
-        <button data-nav="tech"
-                class="px-5 py-2.5 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition">
-          Go to Tech
-        </button>
+       <button data-nav="tech"
+        class="px-5 py-2.5 rounded-xl font-semibold shadow-md btn-tech">
+  Go to Tech
+</button>
       </div>
-
       <!-- Events -->
       <div class="card card-hover p-6">
         <h3 class="text-xl font-extrabold text-gray-900 mb-1">Events</h3>
         <p class="text-sm text-gray-700 mb-5">Local community events, pop-ups, and brand activations.</p>
         <button data-nav="events"
-                class="px-5 py-2.5 rounded-xl font-semibold text-white shadow-md bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700">
-          Go to Events
+        class="px-5 py-2.5 rounded-xl font-semibold shadow-md btn-events">
+  Go to Events
+</button>
+
         </button>
       </div>
 
@@ -1004,6 +1043,35 @@ btn.classList.toggle("text-gray-900", isActive); // darker text when active
   tray.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-nav]");
     if (btn) tray.classList.add("hidden");
+  });
+})();
+</script>
+<script>
+(function(){
+  const root = document.getElementById('meals-dd');
+  if(!root) return;
+  const btn  = root.querySelector('button[aria-controls="meals-menu"]');
+  const menu = document.getElementById('meals-menu');
+
+  function closeMenu(){ menu.classList.add('hidden'); btn.setAttribute('aria-expanded','false'); }
+  function openMenu(){  menu.classList.remove('hidden'); btn.setAttribute('aria-expanded','true'); }
+
+  btn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const open = btn.getAttribute('aria-expanded') === 'true';
+    open ? closeMenu() : openMenu();
+  });
+
+  // close on outside click / ESC
+  document.addEventListener('click', (e)=> {
+    if(!menu.classList.contains('hidden') && !root.contains(e.target)) closeMenu();
+  });
+  document.addEventListener('keydown', (e)=> { if(e.key === 'Escape') closeMenu(); });
+
+  // close menu when a menu item navigates
+  menu.addEventListener('click', (e)=>{
+    const item = e.target.closest('[data-nav],a[role="menuitem"]');
+    if(item) closeMenu();
   });
 })();
 </script>
