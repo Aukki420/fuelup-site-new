@@ -33,7 +33,8 @@
 .dropdown { z-index: 1000 !important; }
 .dd-open { position: relative; z-index: 1001; }
 .dd-raise { z-index: 1100; }
-
+/* Ensure the grid doesn’t clip the dropdown */
+#verticals { overflow: visible; }
  /* Custom nav active style */
     
 /* lighter orange → yellow frame for cards */
@@ -130,10 +131,10 @@ textarea:focus, textarea:focus-visible{
   <div id="toast" class="toast hidden-section max-w-md w-full p-4 rounded-lg shadow-lg"></div>
 
 <!-- NAV -->
-  <main class="flex-1">
+ 
 <nav id="main-nav" class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-
+ 
     <!-- Brand → goes Home -->
   <a href="#home"
    class="logo-link inline-flex items-center gap-2 select-none"
@@ -176,7 +177,7 @@ textarea:focus, textarea:focus-visible{
     </div>
   </div>
 </nav>
-
+<main class="flex-1">
   <!-- HOME -->
   <!-- HOME -->
 <!-- HOME (Compact Hub) -->
@@ -1018,37 +1019,11 @@ btn.classList.toggle("text-gray-900", isActive); // darker text when active
 <script>
 (function(){
   const root = document.getElementById('meals-dd');
-  if(!root) return;
+  if (!root) return;
 
   const btn  = root.querySelector('button[aria-controls="meals-menu"]');
   const menu = document.getElementById('meals-menu');
-  const card = root.closest('.card'); // <-- this was missing
-
-  function place() {
-    const isMobile = window.innerWidth < 768;
-    const rect = btn.getBoundingClientRect();
-
-    if (isMobile) {
-      // fixed so nothing clips it on small screens
-      menu.style.position = 'fixed';
-      const minW = Math.max(rect.width, 240);
-      menu.style.minWidth = minW + 'px';
-      // 16px viewport padding
-      const left = Math.max(16, Math.min(rect.left, window.innerWidth - minW - 16));
-      menu.style.left = left + 'px';
-      menu.style.top  = (rect.bottom + 8) + 'px';
-      menu.style.right = 'auto';
-      menu.style.zIndex = '10000';
-    } else {
-      // desktop: anchor to card
-      menu.style.position = 'absolute';
-      menu.style.left = '0';
-      menu.style.top = '';
-      menu.style.right = '';
-      menu.style.minWidth = '240px';
-      menu.style.zIndex = '';
-    }
-  }
+  const card = root.closest('.card'); // Meals card
 
  function openMenu(){
     menu.classList.remove('hidden');
@@ -1056,8 +1031,9 @@ btn.classList.toggle("text-gray-900", isActive); // darker text when active
     root.classList.add('dd-open');            // local lift
     if (card) card.classList.add('dd-raise'); // raise whole card above Tech/Events
     place();
-    window.addEventListener('scroll', place, { passive:true });
-    window.addEventListener('resize', place);
+    menu.style.position = 'absolute';
+    menu.style.left = '0';
+    menu.style.minWidth = '240px';
   }
 
   function closeMenu(){
@@ -1065,8 +1041,7 @@ btn.classList.toggle("text-gray-900", isActive); // darker text when active
     btn.setAttribute('aria-expanded','false');
     root.classList.remove('dd-open');
     if (card) card.classList.remove('dd-raise');
-    window.removeEventListener('scroll', place);
-    window.removeEventListener('resize', place);
+  
   }
 
   btn.addEventListener('click', (e)=>{
