@@ -20,14 +20,16 @@
 .btn-meals,.btn-tech,.btn-events{ transition: transform .18s ease, box-shadow .18s ease; }
 
 /* Simple dropdown */
-.dropdown { position: absolute; top: 100%; left: 0; margin-top: .5rem; min-width: 240px;
-  background: #fff; border: 1px solid #e5e7eb; border-radius: .75rem; box-shadow: 0 12px 28px rgba(0,0,0,.08); z-index: 30; }
+.dropdown { position: absolute; top: 100%; left: 0; margin-top: 0.5rem; min-width: 240px;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: .75rem; box-shadow: 0 12px 28px rgba(0,0,0,.08); z-index: 1000; }
 .dropdown a, .dropdown button { display:flex; justify-content:space-between; width:100%; text-align:left;
   padding: .625rem .875rem; border-radius: .5rem; font-weight:600; color:#111827; }
 .dropdown a:hover, .dropdown button:hover { background:#f9fafb; }
 .dropdown .hint { font-size: .75rem; font-weight:700; padding:.125rem .5rem; border-radius:999px; border:1px solid #d1fae5; color:#065f46; background:#ecfdf5; }
 .dropdown .soon { border-color:#e5e7eb; color:#6b7280; background:#f3f4f6; }
 .dropdown .disabled { opacity:.45; pointer-events:none; }
+/* When Meals menu is open, lift its wrapper above neighbors */
+.dd-open { position: relative; z-index: 1001; }
 
  /* Custom nav active style */
     
@@ -1034,15 +1036,16 @@ btn.classList.toggle("text-gray-900", isActive); // darker text when active
 })();
 </script>
 <script>
-(function(){
-  const root = document.getElementById('meals-dd');
-  if(!root) return;
-  const btn  = root.querySelector('button[aria-controls="meals-menu"]');
-  const menu = document.getElementById('meals-menu');
-
-  function closeMenu(){ menu.classList.add('hidden'); btn.setAttribute('aria-expanded','false'); }
-  function openMenu(){  menu.classList.remove('hidden'); btn.setAttribute('aria-expanded','true'); }
-
+( function closeMenu(){
+   menu.classList.add('hidden');
+   btn.setAttribute('aria-expanded','false');
+   root.classList.remove('dd-open');     // drop back to normal stacking
+ }
+ function openMenu(){
+   menu.classList.remove('hidden');
+  btn.setAttribute('aria-expanded','true');
+  root.classList.add('dd-open');        // lift above adjacent cards
+}
   btn.addEventListener('click', (e)=>{
     e.stopPropagation();
     const open = btn.getAttribute('aria-expanded') === 'true';
