@@ -28,13 +28,11 @@
 .dropdown .hint { font-size: .75rem; font-weight:700; padding:.125rem .5rem; border-radius:999px; border:1px solid #d1fae5; color:#065f46; background:#ecfdf5; }
 .dropdown .soon { border-color:#e5e7eb; color:#6b7280; background:#f3f4f6; }
 .dropdown .disabled { opacity:.45; pointer-events:none; }
-/* the card and grid will never clip the dropdown */
-.card { overflow: visible; }                 /* overrides any hidden overflow */
-#verticals .grid { overflow: visible; }      /* parent grid can’t clip children */
-
-/* Lift the menu and its wrapper when open  */
+/* raise dropdown & the whole card when open */
+.card { position: relative; }
+.dropdown { z-index: 1000 !important; }
 .dd-open { position: relative; z-index: 1001; }
-
+.dd-raise { z-index: 1100; }
 
  /* Custom nav active style */
     
@@ -104,8 +102,6 @@ textarea:focus, textarea:focus-visible{
 #meals-dd > button[aria-expanded="true"] svg {
   transform: rotate(180deg);
 }
-
-    <style>
   /* Force wide 3-up layout for Food → How it works */
   #food-how .grid {
     display: grid !important;
@@ -119,8 +115,6 @@ textarea:focus, textarea:focus-visible{
   justify-content: flex-start !important;
   /* add this for safety */
   min-width: 0 !important;
-}
-
   /* Keep mobile stacked */
   @media (max-width: 767.98px) {
     #food-how .grid {
@@ -193,7 +187,10 @@ textarea:focus, textarea:focus-visible{
  <img src="fuelup-logo-graphite-800.png"
      srcset="fuelup-logo-graphite-800.png 1x, fuelup-logo-graphite-1600.png 2x"
      alt="FuelUp Concepts Ltd."
-     class="mx-auto h-12 md:h-14 w-auto" />
+     class="mx-auto h-16 md:h-18 w-auto" />
+<p class="mt-3 md:mt-4 text-base md:text-lg text-gray-600">
+  FuelUp Concepts Ltd. delivers dependable food solutions, memorable events,
+  and emerging technology services in Kitimat.
 </p>
       <!-- Minimal CTAs -->
       <div class="mt-6 flex flex-wrap justify-center gap-3">
@@ -210,7 +207,7 @@ textarea:focus, textarea:focus-visible{
       <!-- Meals -->
 <div class="card p-6 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
         <h3 class="text-xl font-extrabold text-gray-900 mb-1">Meals</h3>
-        <p class="text-sm text-gray-700 mb-4">Consumer services and restaurant collaborations.</p>
+        <p class="text-sm text-gray-700 mb-4">Curated daily lunchboxes built with local partner kitchens.</p>
 
       <div class="relative" id="meals-dd">
   <button type="button"
@@ -223,28 +220,20 @@ textarea:focus, textarea:focus-visible{
   </button>
 
   <!-- Dropdown menu -->
-  <div id="meals-menu" class="dropdown hidden" role="menu" aria-label="Meals actions">
-    <button data-nav="restaurant-partners" role="menuitem">
-      Restaurant Onboarding
-    </button>
-    <a href="https://fuelupmeals.ca" target="_blank" rel="noopener" role="menuitem">
-      FuelUp Lunchboxes
-      <span class="hint">LIVE</span>
-    </a>
-    <button class="disabled" type="button" role="menuitem">
-      Breakfast / Dinner
-      <span class="soon">SOON</span>
-    </button>
-    <button data-nav="food" role="menuitem">
-      FuelUp Kitchen
-    </button>
-  </div>
+ <div id="meals-menu" class="dropdown hidden" role="menu" aria-label="Meals actions">
+  <button data-nav="restaurant-partners" role="menuitem">Partner with Us</button>
+  <a href="https://fuelupmeals.ca" target="_blank" rel="noopener" role="menuitem">
+    Order Lunchboxes <span class="hint">LIVE</span>
+  </a>
+  <button class="disabled" type="button" role="menuitem">Breakfast &amp; Dinner <span class="soon">SOON</span></button>
+  <button data-nav="food" role="menuitem">FuelUp Kitchen</button>
+</div>
 </div>
 </div>
       <!-- Tech -->
       <div class="card p-6 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
         <h3 class="text-xl font-extrabold text-gray-900 mb-1">Tech</h3>
-        <p class="text-sm text-gray-700 mb-5">Apps & tools powering passes, routing, payouts, and support.</p>
+        <p class="text-sm text-gray-700 mb-5">AI driven Creative content design and digital solutions.</p>
        <button data-nav="tech"
         class="px-5 py-2.5 rounded-xl font-semibold shadow-md btn-tech">
   Go to Tech
@@ -1035,15 +1024,18 @@ btn.classList.toggle("text-gray-900", isActive); // darker text when active
   const menu = document.getElementById('meals-menu');
 
   function closeMenu(){
-    menu.classList.add('hidden');
-    btn.setAttribute('aria-expanded','false');
-    root.classList.remove('dd-open');  // drop back to normal stacking
-  }
-  function openMenu(){
-    menu.classList.remove('hidden');
-    btn.setAttribute('aria-expanded','true');
-    root.classList.add('dd-open');     // lift above adjacent cards
-  }
+  menu.classList.add('hidden');
+  btn.setAttribute('aria-expanded','false');
+  root.classList.remove('dd-open');  // lift off
+   if (card) card.classList.remove('dd-raise');
+}
+function openMenu(){
+  menu.classList.remove('hidden');
+  btn.setAttribute('aria-expanded','true');
+  root.classList.add('dd-open');     // lift on
+  if (card) card.classList.add('dd-raise');
+}
+
 
   btn.addEventListener('click', (e)=>{
     e.stopPropagation();
