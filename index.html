@@ -196,56 +196,35 @@ textarea:focus, textarea:focus-visible{
         <h3 class="text-xl font-extrabold text-gray-900 mb-1">Meals</h3>
         <p class="text-sm text-gray-700 mb-4">Consumer services and restaurant collaborations.</p>
 
-        <!-- Inline children summary (not long, just a glance) -->
-        <ul class="text-sm text-gray-700 space-y-2 mb-5">
-          <li class="flex items-center justify-between">
-            <span>FuelUp Lunchboxes</span>
-            <a href="https://fuelupmeals.ca" target="_blank" rel="noopener"
-               class="text-xs px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">LIVE</a>
-          </li>
-          <li class="flex items-center justify-between">
-            <span>Breakfast / Dinner</span>
-            <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 border border-gray-200">SOON</span>
-          </li>
-          <li class="flex items-center justify-between">
-            <span>FuelUp Kitchen</span>
-            <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-700 border border-gray-200">UPCOMING</span>
-          </li>
-        </ul>
-
-       <div class="flex flex-col gap-2">
-  <!-- keep the neutral 'Go to Meals' -->
-  <button data-nav="food"
-          class="px-5 py-2.5 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition">
+      <div class="relative" id="meals-dd">
+  <button type="button"
+          class="px-5 py-2.5 rounded-xl font-semibold shadow-md btn-meals w-full flex items-center justify-between"
+          aria-haspopup="true" aria-expanded="false" aria-controls="meals-menu">
     Go to Meals
+    <svg class="h-4 w-4 opacity-90" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"/>
+    </svg>
   </button>
 
-  <!-- split dropdown for Meals actions -->
-  <div class="relative" id="meals-dd">
-    <button type="button"
-            class="px-5 py-2.5 rounded-xl font-semibold shadow-md btn-meals w-full flex items-center justify-between"
-            aria-haspopup="true" aria-expanded="false" aria-controls="meals-menu">
-      Meals actions
-      <svg class="h-4 w-4 opacity-90" viewBox="0 0 20 20" fill="currentColor"><path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"/></svg>
+  <!-- Dropdown menu -->
+  <div id="meals-menu" class="dropdown hidden" role="menu" aria-label="Meals actions">
+    <button data-nav="restaurant-partners" role="menuitem">
+      Restaurant Onboarding
     </button>
-    <div id="meals-menu" class="dropdown hidden" role="menu">
-      <button data-nav="restaurant-partners" class="" role="menuitem">
-        Restaurant Onboarding
-      </button>
-      <a href="https://fuelupmeals.ca" target="_blank" rel="noopener" role="menuitem">
-        FuelUp Lunchboxes
-        <span class="hint">LIVE</span>
-      </a>
-      <button class="disabled" type="button" role="menuitem">
-        Breakfast / Dinner
-        <span class="soon">SOON</span>
-      </button>
-      <button data-nav="food" role="menuitem">
-        FuelUp Kitchen
-      </button>
-    </div>
+    <a href="https://fuelupmeals.ca" target="_blank" rel="noopener" role="menuitem">
+      FuelUp Lunchboxes
+      <span class="hint">LIVE</span>
+    </a>
+    <button class="disabled" type="button" role="menuitem">
+      Breakfast / Dinner
+      <span class="soon">SOON</span>
+    </button>
+    <button data-nav="food" role="menuitem">
+      FuelUp Kitchen
+    </button>
   </div>
 </div>
+
 
       <!-- Tech -->
       <div class="card card-hover p-6">
