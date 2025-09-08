@@ -427,33 +427,39 @@ textarea:focus, textarea:focus-visible{
         Open for New Restaurants in Kitimat
       </div>
 
-      <!-- Logo -->
-      <img src="lunchboxes-logo.PNG" alt="FuelUp Lunchboxes" class="h-12 w-auto mb-4">
+      <!-- Side-by-side: Logo (left) + Heading/Copy/CTAs (right) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-8 mb-10">
+        <!-- Left: bigger logo -->
+        <div class="flex md:block justify-center">
+          <img src="lunchboxes-logo.PNG"
+               alt="FuelUp Lunchboxes"
+               class="h-16 md:h-20 lg:h-24 w-auto">
+        </div>
+        <!-- Right: heading, subtext, CTAs -->
+        <div>
+          <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">
+            Partner with <span class="text-red-600">FuelUp Meals</span>
+          </h1>
 
-      <!-- Headline -->
-      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 mb-6">
-        Partner with <span class="text-red-600">FuelUp Meals</span>
-      </h1>
+          <p class="text-lg text-gray-800 mt-4">
+            We bring you <span class="font-semibold text-red-600">guaranteed weekday meal orders</span>,
+            <span class="font-semibold text-yellow-500"> predictable weekly payouts</span>, and
+            <span class="font-semibold"> zero upfront cost</span>. Keep running your kitchen as usual — we handle
+            pre-sales, logistics, and customer support.
+          </p>
 
-      <!-- Subtext -->
-      <p class="text-lg text-gray-800 mb-8">
-        We bring you <span class="font-semibold text-red-600">guaranteed weekday meal orders</span>,
-        <span class="font-semibold text-yellow-500"> predictable weekly payouts</span>, and
-        <span class="font-semibold"> zero upfront cost</span>. Keep running your kitchen as usual — we handle
-        pre-sales, logistics, and customer support.
-      </p>
-
-      <!-- CTA buttons -->
-      <div class="flex flex-wrap gap-3 mb-10">
-        <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
-                class="px-7 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
-                style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-          Join as a Restaurant Partner
-        </button>
-        <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})"
-                class="border border-gray-300 bg-white text-gray-800 px-7 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
-          How it Works
-        </button>
+          <div class="flex flex-wrap gap-3 mt-6">
+            <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
+                    class="px-7 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
+                    style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+              Join as a Restaurant Partner
+            </button>
+            <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})"
+                    class="border border-gray-300 bg-white text-gray-800 px-7 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+              How it Works
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- 3 logical cards -->
@@ -470,6 +476,61 @@ textarea:focus, textarea:focus-visible{
   <h4 class="font-semibold text-red-600 mb-1">Keep Your Brand</h4>
   <p class="text-sm text-gray-700">Operate as usual in your kitchen.</p>
 </div>
+      </div>
+
+      <!-- NEW: Weekday lunch rotation (left text only, no 'What we look for') -->
+      <div class="mt-12 rounded-xl border border-gray-200 p-6 md:p-8 bg-white/70">
+        <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900">Join a weekday lunch rotation</h2>
+
+        <p class="mt-3 text-gray-800">
+          Join a weekday lunch rotation that brings predictable orders without gambling on foot traffic.
+          You cook your strengths—we standardize the boxes, handle sales, support, and delivery.
+        </p>
+
+        <ul class="mt-4 space-y-2 text-gray-800">
+          <li class="flex items-start gap-2">
+            <span class="mt-2 h-2 w-2 rounded-full bg-red-600"></span>
+            <span>Consistent weekday volume (Mon–Fri)</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-2 h-2 w-2 rounded-full bg-red-600"></span>
+            <span>Pre-agreed payout per box · simple paperwork</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-2 h-2 w-2 rounded-full bg-red-600"></span>
+            <span>No marketing spend, no delivery setup</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="mt-2 h-2 w-2 rounded-full bg-red-600"></span>
+            <span>Keep your own brand for dine-in; fulfill FuelUp boxes for lunch</span>
+          </li>
+        </ul>
+
+        <div class="mt-6">
+          <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
+                  class="px-6 py-2.5 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
+                  style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+            Apply now
+          </button>
+        </div>
+      </div>
+
+      <!-- NEW: The three small callouts -->
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white rounded-xl border border-yellow-200 p-5">
+          <h4 class="font-semibold text-gray-900 mb-1">
+            <span class="text-red-600">Predictable</span>
+          </h4>
+          <p class="text-sm text-gray-700">We pre-sell via passes, so your counts are clear and stable.</p>
+        </div>
+        <div class="bg-white rounded-xl border border-yellow-200 p-5">
+          <h4 class="font-semibold text-gray-900 mb-1">Simple</h4>
+          <p class="text-sm text-gray-700">Box specs, labels, and pickup—no third-party menus to manage.</p>
+        </div>
+        <div class="bg-white rounded-xl border border-yellow-200 p-5">
+          <h4 class="font-semibold text-gray-900 mb-1">Local</h4>
+          <p class="text-sm text-gray-700">We’re Kitimat-based and easy to reach. Support is human.</p>
+        </div>
       </div>
     </div>
   </div>
