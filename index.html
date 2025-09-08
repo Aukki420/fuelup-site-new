@@ -612,7 +612,7 @@ textarea:focus, textarea:focus-visible{
       <div id="apply-form" class="p-8 rounded-xl shadow-sm border border-gray-100" style="background-color:#fdf6ec">
   <h3 class="text-3xl font-extrabold text-gray-900 mb-8">Apply to Partner</h3>
 
-  <form id="partner-form" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100" enctype="multipart/form-data">
+  <form id="partner-form" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100" enctype="multipart/form-data" action="https://formspree.io/f/myzdnvay" method="POST">
     <input type="text" name="_gotcha" class="hidden" autocomplete="off" tabindex="-1" />
     <input type="hidden" name="_subject" value="Restaurant Application — FuelUp" />
 
@@ -954,7 +954,22 @@ textarea:focus, textarea:focus-visible{
     Object.values(forms).forEach(({id, endpoint})=>{
       const f = document.getElementById(id);
       if(!f) return;
-      f.addEventListener('submit', (e)=>{ e.preventDefault(); submitViaFormspree(f, endpoint); });
+      // Special handling for partner form with file upload
+      if(id === "partner-form") {
+        f.addEventListener('submit', (e)=>{
+          const fileInput = f.querySelector('input[type="file"]');
+          if(fileInput && fileInput.files && fileInput.files.length > 0) {
+            // Let browser handle file upload via normal POST
+            return;
+          } else {
+            // No file selected, use AJAX
+            e.preventDefault();
+            submitViaFormspree(f, endpoint);
+          }
+        });
+      } else {
+        f.addEventListener('submit', (e)=>{ e.preventDefault(); submitViaFormspree(f, endpoint); });
+      }
     });
   </script>
         <script>
