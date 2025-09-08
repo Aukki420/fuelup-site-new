@@ -9,8 +9,38 @@
   <style>
   .hidden-section{display:none}
   .toast{position:fixed;top:16px;right:16px;z-index:1000}
+  #main-nav.hidden {
+  display: none !important;
+}
+/* Vertical gradient buttons */
+.btn-meals { background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%) !important; color:#fff !important; box-shadow: 0 6px 14px rgba(220,38,38,.18); }
+.btn-tech  { background-image: linear-gradient(135deg,#4f46e5 0%, #3b82f6 100%) !important; color:#fff !important; box-shadow: 0 6px 14px rgba(79,70,229,.20); }
+.btn-events{ background-image: linear-gradient(135deg,#7c3aed 0%, #a855f7 100%) !important; color:#fff !important; box-shadow: 0 6px 14px rgba(124,58,237,.20); }
+.btn-meals:hover,.btn-tech:hover,.btn-events:hover{ transform: translateY(-1px); }
+.btn-meals,.btn-tech,.btn-events{ transition: transform .18s ease, box-shadow .18s ease; }
 
+/* Simple dropdown */
+.dropdown { position: absolute; top: 100%; left: 0; margin-top: 0.5rem; min-width: 240px;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: .75rem; box-shadow: 0 12px 28px rgba(0,0,0,.08); z-index: 1000; }
+.dropdown a, .dropdown button { display:flex; justify-content:space-between; width:100%; text-align:left;
+  padding: .625rem .875rem; border-radius: .5rem; font-weight:600; color:#111827; }
+.dropdown a:hover, .dropdown button:hover { background:#f9fafb; }
+.dropdown .hint { font-size: .75rem; font-weight:700; padding:.125rem .5rem; border-radius:999px; border:1px solid #d1fae5; color:#065f46; background:#ecfdf5; }
+.dropdown .soon { border-color:#e5e7eb; color:#6b7280; background:#f3f4f6; }
+.dropdown .disabled { opacity:.45; pointer-events:none; }
+/* raise dropdown & the whole card when open */
+.card { position: relative; }
+.dropdown { z-index: 1000 !important; }
+.dd-open { position: relative; z-index: 1001; }
+.dd-raise { z-index: 1100; }
+/* Ensure the grid doesn’t clip the dropdown */
+#verticals { overflow: visible; }
  /* Custom nav active style */
+    
+/* lighter orange → yellow frame for cards */
+.grad-frame{
+  background-image: linear-gradient(135deg,#fdba74 0%, #fde68a 100%); 
+}
 
 /* Hover stays lighter than active */
 .nav-link:hover {
@@ -66,17 +96,45 @@ textarea:focus, textarea:focus-visible{
   box-shadow:none !important;
   outline:2px solid rgba(0,0,0,0.12) !important; outline-offset:2px !important;
 }
+    /* Rotate the chevron arrow in Meals button when menu is open */
+#meals-dd > button svg {
+  transition: transform .2s ease;
+}
+#meals-dd > button[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+  /* Force wide 3-up layout for Food → How it works */
+  #food-how .grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 1.5rem !important; /* 24px */
+    align-items: stretch !important;
+  }
+#food-how .rounded-2xl.border-yellow-200.bg-white {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-start !important;
+  /* add this for safety */
+  min-width: 0 !important;
+}
+  /* Keep mobile stacked */
+  @media (max-width: 767.98px) {
+    #food-how .grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
 </style>
 
 </head>
-<body class="bg-white text-gray-900">
+<body class="min-h-screen flex flex-col">
   <!-- Toast -->
   <div id="toast" class="toast hidden-section max-w-md w-full p-4 rounded-lg shadow-lg"></div>
 
 <!-- NAV -->
-<nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
+ 
+<nav id="main-nav" class="sticky top-0 z-50 relative bg-white/95 backdrop-blur border-b border-gray-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-
+ 
     <!-- Brand → goes Home -->
   <a href="#home"
    class="logo-link inline-flex items-center gap-2 select-none"
@@ -84,7 +142,7 @@ textarea:focus, textarea:focus-visible{
   <img src="fuelup-logo-graphite-800.png"
        srcset="fuelup-logo-graphite-800.png 1x, fuelup-logo-graphite-1600.png 2x"
        alt="FuelUp Concepts Ltd."
-       class="h-12 md:h-14 w-auto pointer-events-none" />
+       class="h-14 md:h-16 w-auto pointer-events-none" />
 </a>
     <!-- Desktop links -->
     <div class="hidden md:flex items-center gap-2">
@@ -98,7 +156,7 @@ textarea:focus, textarea:focus-visible{
     </div>
 
     <!-- Mobile hamburger -->
-    <button id="nav-toggle" class="md:hidden p-2 rounded-md border border-gray-200 text-gray-700" aria-label="Menu">
+<button id="nav-toggle" class="md:hidden p-2 rounded-md border border-gray-200 text-gray-700" aria-label="Menu" aria-expanded="false">
       <!-- simple menu icon -->
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -107,7 +165,7 @@ textarea:focus, textarea:focus-visible{
   </div>
 
   <!-- Mobile tray -->
-  <div id="nav-mobile" class="md:hidden hidden border-t border-gray-200 bg-white/95 backdrop-blur">
+<div id="nav-mobile" class="md:hidden hidden absolute left-0 top-full w-full z-[10000] border-t border-gray-200 bg-white/95 backdrop-blur">
     <div class="px-4 py-2 flex flex-col">
       <button data-nav="home" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Home</button>
       <button data-nav="food" class="nav-link text-left px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:bg-black/5">Food</button>
@@ -119,158 +177,102 @@ textarea:focus, textarea:focus-visible{
     </div>
   </div>
 </nav>
-
+<main class="flex-1">
   <!-- HOME -->
   <!-- HOME -->
-<section id="home" class="py-16 md:py-24 bg-white">
+<!-- HOME (Compact Hub) -->
+<section id="home" class="py-12 md:py-16 bg-white hero-polish">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- Eyebrow -->
-    <div class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-[11px] font-semibold border border-gray-200 shadow-sm">
-      <span class="inline-block h-2 w-2 rounded-full bg-gray-900"></span>
-      FuelUp Concepts Ltd — Parent Site
+ <img src="fuelup-logo-graphite-800.png"
+     srcset="fuelup-logo-graphite-800.png 1x, fuelup-logo-graphite-1600.png 2x"
+     alt="FuelUp Concepts Ltd."
+     class="mx-auto h-16 md:h-18 w-auto" />
+<p class="mt-3 md:mt-4 text-base md:text-lg text-gray-600">
+       |Buget.Reliable.Effecient.Localised|
+</p>
+      <!-- Minimal CTAs -->
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <button data-nav="about"
+                class="px-6 py-2.5 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition">
+          About Us
+        </button>
+      </div>
     </div>
+<!-- Tagline -->
+<p class="mt-6 text-center text-gray-700 text-base md:text-lg max-w-3xl mx-auto">
+  FuelUp Concepts Ltd. provides dependable food solutions, memorable events, and emerging tech services in Kitimat.
+</p>
 
-    <!-- Hero -->
-    <h1 class="mt-5 text-4xl md:text-6xl font-extrabold tracking-tight leading-[1.1] text-gray-900">
-      Local service brands, built to scale.
-    </h1>
-    <p class="mt-5 max-w-3xl text-base md:text-lg text-gray-700">
-      We operate three verticals — <strong>Meals</strong>, <strong>Tech</strong>, and <strong>Events</strong> — with a simple, reliable approach:
-      standardized SOPs, predictable payouts, and friendly local delivery.
-    </p>
-
-    <!-- Top CTAs -->
-    <div class="mt-8 flex flex-wrap gap-3">
-      <button data-nav="food"
-              class="px-7 py-3 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300">
-        Explore Meals
-      </button>
-      <button data-nav="restaurant-partners"
-        class="px-7 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient">
-  Restaurant Partners
-</button>
-      <button data-nav="events"
-              class="px-7 py-3 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient">
-        View Events
-      </button>
-    </div>
-
-    <!-- Verticals -->
-    <h2 class="mt-12 text-2xl md:text-3xl font-extrabold text-gray-900">Our Verticals</h2>
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-
-      <!-- Meals (parent of FuelUp Meals & FuelUp Kitchen) -->
-      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition">
-        <div class="p-6">
-          <div class="mb-3 inline-flex items-center rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700 border border-gray-200">
-            Meals
-          </div>
-          <h3 class="text-xl font-extrabold text-gray-900">FuelUp Meals</h3>
-          <p class="mt-2 text-gray-700 text-sm">Consumer-facing meal services: passes, weekday lunches, and coming soon — breakfast & dinner.</p>
-
-          <!-- Children under FuelUp Meals -->
-          <div class="mt-4 grid grid-cols-1 gap-3">
-            <!-- Lunchboxes (live link) -->
-           <a href="https://fuelupmeals.ca" target="_blank" rel="noopener"
-   class="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3 hover:bg-gray-50">
-  <div>
-    <div class="font-semibold text-gray-900">FuelUp Lunchboxes</div>
-    <div class="text-xs text-gray-600">Live — customer site</div>
+<!-- Proof mini-cards -->
+<div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-5xl mx-auto">
+  <div class="bg-white rounded-xl border border-gray-200 p-5 text-center shadow-sm">
+    <div class="text-sm font-semibold text-gray-900">Reliable</div>
+    <p class="mt-1 text-sm text-gray-600">Predictable ops, clear SOPs, weekly cadence.</p>
   </div>
-  <span class="text-xs font-semibold px-2 py-1 rounded-full bg-green-50 text-green-700 border border-green-200">LIVE</span>
-</a>
-            <!-- Breakfast (coming soon) -->
-            <div class="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3">
-              <div>
-                <div class="font-semibold text-gray-900">FuelUp Breakfast</div>
-                <div class="text-xs text-gray-600">Coming soon</div>
-              </div>
-              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-gray-100 text-gray-700 border border-gray-200">SOON</span>
-            </div>
-
-            <!-- Dinner (coming soon) -->
-            <div class="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3">
-              <div>
-                <div class="font-semibold text-gray-900">FuelUp Dinner</div>
-                <div class="text-xs text-gray-600">Coming soon</div>
-              </div>
-              <span class="text-xs font-semibold px-2 py-1 rounded-full bg-gray-100 text-gray-700 border border-gray-200">SOON</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Restaurant Partners entry (still routes to partner page) -->
-        <div class="px-6 pb-6">
-          <button data-nav="restaurant-partners"
-        class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient">
-  Partner with FuelUp Meals
-</button>
-        </div>
-      </div>
-
-     <!-- FuelUp Kitchen — gradient frame style (light) -->
-<div class="group rounded-2xl p-[1px] shadow-sm hover:shadow-md transition grad-frame">
-  <div class="bg-white rounded-2xl">
-    <div class="p-6">
-      <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
-        Operations
-      </div>
-      <h3 class="text-xl font-extrabold text-gray-900">FuelUp Kitchen</h3>
-      <p class="mt-2 text-gray-700 text-sm">
-        Cloud-kitchen collaboration and standardized prep. SOPs, labeling, and QA for consistent output.
-      </p>
-      <div class="mt-4 flex flex-wrap gap-2">
-        <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Standardized boxes</span>
-        <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">SOP-driven</span>
-      </div>
-    </div>
-    <div class="px-6 pb-6">
-      <button data-nav="tech"
-              class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300">
-        Learn More
-      </button>
-    </div>
+  <div class="bg-white rounded-xl border border-gray-200 p-5 text-center shadow-sm">
+    <div class="text-sm font-semibold text-gray-900">Local</div>
+    <p class="mt-1 text-sm text-gray-600">Kitimat-first partners and community focus.</p>
+  </div>
+  <div class="bg-white rounded-xl border border-gray-200 p-5 text-center shadow-sm">
+    <div class="text-sm font-semibold text-gray-900">Simple</div>
+    <p class="mt-1 text-sm text-gray-600">Straightforward offers with clear handoffs.</p>
   </div>
 </div>
 
-      <!-- Tech -->
-      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition">
-        <div class="p-6">
-          <div class="mb-3 inline-flex items-center rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700 border border-gray-200">
-            Tech
-          </div>
-          <h3 class="text-xl font-extrabold text-gray-900">FuelUp Tech</h3>
-          <p class="mt-2 text-gray-700 text-sm">Apps & tools powering routing, passes, payouts, and support.</p>
-          <div class="mt-4">
-            <button data-nav="tech"
-                    class="px-4 py-2 rounded-lg font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300">
-              View Tech
-            </button>
-          </div>
-        </div>
-      </div>
+    <!-- Hub cards: choose a vertical (single row on desktop) -->
+    <div id="verticals" class="mt-10 md:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
 
-      <!-- Events -->
-      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition md:col-span-3">
-        <div class="p-6">
-          <div class="mb-3 inline-flex items-center rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700 border border-gray-200">
-            Events
-          </div>
-          <h3 class="text-xl font-extrabold text-gray-900">FuelUp Events</h3>
-          <p class="mt-2 text-gray-700 text-sm">Local community events and pop-ups. Partner showcases and tasting sessions.</p>
-          <div class="mt-4">
-            <button data-nav="events"
-                    class="px-4 py-2 rounded-lg font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300">
-              View Events
-            </button>
-          </div>
-        </div>
+      <!-- Meals -->
+<div class="card p-6 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
+        <h3 class="text-xl font-extrabold text-gray-900 mb-1">Meals</h3>
+        <p class="text-sm text-gray-700 mb-4">Curated daily lunchboxes built with local partner kitchens.</p>
+
+      <div class="relative" id="meals-dd">
+  <button type="button"
+          class="px-5 py-2.5 rounded-xl font-semibold shadow-md btn-meals"
+          aria-haspopup="true" aria-expanded="false" aria-controls="meals-menu">
+    Go to Meals
+    <svg class="h-4 w-4 opacity-90" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+      <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"/>
+    </svg>
+  </button>
+
+  <!-- Dropdown menu -->
+ <div id="meals-menu" class="dropdown hidden" role="menu" aria-label="Meals actions">
+  <button data-nav="restaurant-partners" role="menuitem">Partner with Us</button>
+  <a href="https://fuelupmeals.ca" target="_blank" rel="noopener" role="menuitem">
+    Order Lunchboxes <span class="hint">LIVE</span>
+  </a>
+  <button class="disabled" type="button" role="menuitem">Breakfast &amp; Dinner <span class="soon">SOON</span></button>
+  <button data-nav="food" role="menuitem">FuelUp Kitchen</button>
+</div>
+</div>
+</div>
+      <!-- Tech -->
+      <div class="card p-6 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
+        <h3 class="text-xl font-extrabold text-gray-900 mb-1">Tech</h3>
+        <p class="text-sm text-gray-700 mb-5">AI driven Creative content design and digital solutions.</p>
+       <button data-nav="tech"
+        class="px-5 py-2.5 rounded-xl font-semibold shadow-md btn-tech">
+  Go to Tech
+</button>
+      </div>
+    
+        <!-- Events -->
+      <div class="card p-6 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
+        <h3 class="text-xl font-extrabold text-gray-900 mb-1">Events</h3>
+        <p class="text-sm text-gray-700 mb-5">Local community events, pop-ups, and brand activations.</p>
+        <button data-nav="events"
+        class="px-5 py-2.5 rounded-xl font-semibold shadow-md btn-events">
+  Go to Events
+</button>
       </div>
 
     </div>
   </div>
 </section>
+
   <!-- FOOD -->
  <section id="food" class="py-16 md:py-20" style="background-color:#fffdfa">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -309,99 +311,108 @@ textarea:focus, textarea:focus-visible{
           </div>
         </div>
         <div class="px-6 pb-6">
-          <a href="https://fuelupmeals.ca" target="_blank" rel="noopener"
-   class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient"
+         <a href="https://fuelupmeals.ca" target="_blank" rel="noopener"
+   class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient">
   View Customer Site
 </a>
-
         </div>
       </div>
 
-      <!-- Restaurant Partners (onboarding) -->
-      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition">
-        <div class="p-6">
-          <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
-            For Restaurants
-          </div>
-          <h3 class="text-xl font-extrabold text-gray-900">Restaurant Partners (Lunchboxes)</h3>
-          <p class="mt-2 text-gray-700 text-sm">
-            Join as a fulfillment partner. We assign 3–5 boxes from your menu, do pickups, and pay weekly.
-          </p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">No delivery</span>
-            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Weekly payouts</span>
-          </div>
-        </div>
-        <div class="px-6 pb-6">
-          <button data-nav="restaurant-partners"
-                  class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
-                  style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-            Restaurant Onboarding
-          </button>
-        </div>
+      <!-- Restaurant Partners (onboarding) — gradient frame -->
+<div class="group rounded-2xl p-[1px] shadow-sm hover:shadow-md transition grad-frame">
+  <div class="bg-white rounded-2xl">
+    <div class="p-6">
+      <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
+        For Restaurants
       </div>
-
-      <!-- FuelUp Kitchen (cloud/collab kitchen) -->
-      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition">
-        <div class="p-6">
-          <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
-            Operations
-          </div>
-          <h3 class="text-xl font-extrabold text-gray-900">FuelUp Kitchen</h3>
-          <p class="mt-2 text-gray-700 text-sm">
-            Cloud-kitchen collaboration and standardized prep. SOPs, labeling, and QA for consistent output.
-          </p>
-          <div class="mt-4 flex flex-wrap gap-2">
-            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Standardized boxes</span>
-            <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">SOP-driven</span>
-          </div>
-        </div>
-        <div class="px-6 pb-6">
-          <a href="#" class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50">
-            Learn More
-          </a>
-        </div>
+      <h3 class="text-xl font-extrabold text-gray-900">Restaurant Partners (Lunchboxes)</h3>
+      <p class="mt-2 text-gray-700 text-sm">
+        Join as a fulfillment partner. We assign 3–5 boxes from your menu, do pickups, and pay weekly.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">No delivery</span>
+        <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Weekly payouts</span>
       </div>
-
     </div>
-
-  </div>
-   <!-- Food · How it works -->
-<div id="food-how" class="mt-12 md:mt-16">
-  <div class="rounded-2xl border border-gray-200 p-6 md:p-8" style="background-color:#fff6ea">
-    <h3 class="text-2xl font-extrabold text-gray-900 mb-6 text-center">How FuelUp Food Works</h3>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <!-- 1 -->
-      <div class="bg-white rounded-xl border border-yellow-200 p-6 text-center shadow-sm">
-        <div class="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 rounded-full flex items-center justify-center font-extrabold text-white"
-             style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-          1
-        </div>
-        <h4 class="font-bold text-gray-900 mb-1">Standardize</h4>
-        <p class="text-sm text-gray-700">We define FuelUp-style boxes and SOPs for consistency.</p>
-      </div>
-      <!-- 2 -->
-      <div class="bg-white rounded-xl border border-yellow-200 p-6 text-center shadow-sm">
-        <div class="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 rounded-full flex items-center justify-center font-extrabold text-white"
-             style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-          2
-        </div>
-        <h4 class="font-bold text-gray-900 mb-1">Pre-Sell</h4>
-        <p class="text-sm text-gray-700">Customers buy passes; we schedule weekday orders.</p>
-      </div>
-      <!-- 3 -->
-      <div class="bg-white rounded-xl border border-yellow-200 p-6 text-center shadow-sm">
-        <div class="w-10 h-10 md:w-12 md:h-12 mx-auto mb-3 rounded-full flex items-center justify-center font-extrabold text-white"
-             style="background-image:linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-          3
-        </div>
-        <h4 class="font-bold text-gray-900 mb-1">Fulfill</h4>
-        <p class="text-sm text-gray-700">Restaurants prep; FuelUp handles pickups & service.</p>
-      </div>
+    <div class="px-6 pb-6">
+      <button data-nav="restaurant-partners"
+              class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient">
+        Restaurant Onboarding
+      </button>
     </div>
   </div>
 </div>
+
+     <!-- FuelUp Kitchen — gradient frame (light) -->
+<div class="group rounded-2xl p-[1px] shadow-sm hover:shadow-md transition grad-frame">
+  <div class="bg-white rounded-2xl">
+    <div class="p-6">
+      <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
+        Operations
+      </div>
+      <h3 class="text-xl font-extrabold text-gray-900">FuelUp Kitchen</h3>
+      <p class="mt-2 text-gray-700 text-sm">
+        Cloud-kitchen collaboration and standardized prep. SOPs, labeling, and QA for consistent output.
+      </p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Standardized boxes</span>
+        <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">SOP-driven</span>
+      </div>
+    </div>
+    <div class="px-6 pb-6">
+      <a href="#"
+         class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300">
+        Learn More
+      </a>
+    </div>
+  </div>
+</div>
+ <!-- Food · How it works (TEST)-->
+<div id="food-how" class="mt-12 md:mt-16">
+ <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="rounded-2xl border border-gray-200 p-6 md:p-8" style="background-color:#fff6ea">
+      <h3 class="text-2xl font-extrabold text-gray-900 mb-6 text-center">How FuelUp Food Works</h3>
+
+      <!-- 1 column on mobile, 3 columns on desktop -->
+     <div class="mt-6 grid grid-cols-1 md:grid-cols-1 gap-6 items-stretch">
+        <!-- 1 -->
+<div class="rounded-2xl border border-yellow-200 bg-white p-6 text-center shadow-sm flex flex-col flex-1 min-w-0">
+          <div class="mx-auto mb-3 h-10 w-10 rounded-full flex items-center justify-center"
+               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">
+            <span class="font-extrabold text-white">1</span>
+          </div>
+          <div class="font-semibold text-gray-900">Standardize</div>
+          <p class="mt-2 text-sm text-gray-700">
+            We define FuelUp-style boxes and SOPs for consistency.
+          </p>
+        </div>
+        <!-- 2 -->
+<div class="rounded-2xl border border-yellow-200 bg-white p-6 text-center shadow-sm flex flex-col flex-1 min-w-0">
+          <div class="mx-auto mb-3 h-10 w-10 rounded-full flex items-center justify-center"
+               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">
+            <span class="font-extrabold text-white">2</span>
+          </div>
+          <div class="font-semibold text-gray-900">Pre-Sell</div>
+          <p class="mt-2 text-sm text-gray-700">
+            Customers buy passes; we schedule weekday orders.
+          </p>
+        </div>
+        <!-- 3 -->
+<div class="rounded-2xl border border-yellow-200 bg-white p-6 text-center shadow-sm flex flex-col flex-1 min-w-0">
+          <div class="mx-auto mb-3 h-10 w-10 rounded-full flex items-center justify-center"
+               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">
+            <span class="font-extrabold text-white">3</span>
+          </div>
+          <div class="font-semibold text-gray-900">Fulfill</div>
+          <p class="mt-2 text-sm text-gray-700">
+            Restaurants prep; FuelUp handles pickups & service.
+          </p>
+        </div>
+      </div> <!-- /grid -->
+    </div>   <!-- /rounded container -->
+  </div>     <!-- /max-w wrapper -->
+</div>       <!-- /food-how -->
+
 
 </section>
   <!-- RESTAURANT PARTNERS -->
@@ -601,7 +612,7 @@ textarea:focus, textarea:focus-visible{
       <div id="apply-form" class="p-8 rounded-xl shadow-sm border border-gray-100" style="background-color:#fdf6ec">
   <h3 class="text-3xl font-extrabold text-gray-900 mb-8">Apply to Partner</h3>
 
-  <form id="partner-form" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100" enctype="multipart/form-data" action="https://formspree.io/f/myzdnvay" method="POST">
+  <form id="partner-form" class="bg-white p-8 rounded-xl shadow-sm border border-gray-100" enctype="multipart/form-data">
     <input type="text" name="_gotcha" class="hidden" autocomplete="off" tabindex="-1" />
     <input type="hidden" name="_subject" value="Restaurant Application — FuelUp" />
 
@@ -855,6 +866,7 @@ textarea:focus, textarea:focus-visible{
       </div>
     </div>
   </section>
+</main>
 
   <!-- FOOTER -->
   <footer class="border-t border-gray-200">
@@ -942,22 +954,7 @@ textarea:focus, textarea:focus-visible{
     Object.values(forms).forEach(({id, endpoint})=>{
       const f = document.getElementById(id);
       if(!f) return;
-      // Special handling for partner form with file upload
-      if(id === "partner-form") {
-        f.addEventListener('submit', (e)=>{
-          const fileInput = f.querySelector('input[type="file"]');
-          if(fileInput && fileInput.files && fileInput.files.length > 0) {
-            // Let browser handle file upload via normal POST
-            return;
-          } else {
-            // No file selected, use AJAX
-            e.preventDefault();
-            submitViaFormspree(f, endpoint);
-          }
-        });
-      } else {
-        f.addEventListener('submit', (e)=>{ e.preventDefault(); submitViaFormspree(f, endpoint); });
-      }
+      f.addEventListener('submit', (e)=>{ e.preventDefault(); submitViaFormspree(f, endpoint); });
     });
   </script>
         <script>
@@ -977,6 +974,16 @@ textarea:focus, textarea:focus-visible{
     if (!target) return;
 
     target.classList.remove(HIDDEN);
+      // Toggle nav visibility
+  const nav = document.getElementById("main-nav");
+  if (nav) {
+    if (targetId === "home") {
+      nav.classList.add("hidden");
+    } else {
+      nav.classList.remove("hidden");
+    }
+  }
+
 
     // Update hash unless this came from a hashchange event
     if (!fromHashChange) {
@@ -1028,18 +1035,71 @@ btn.classList.toggle("text-gray-900", isActive); // darker text when active
   resolveInitial();
 })();
 </script>
-        <script>
+<script>
+(function(){
+  const root = document.getElementById('meals-dd');
+  if (!root) return;
+
+  const btn  = root.querySelector('button[aria-controls="meals-menu"]');
+  const menu = document.getElementById('meals-menu');
+  const card = root.closest('.card'); // Meals card
+
+ function openMenu(){
+    menu.classList.remove('hidden');
+    btn.setAttribute('aria-expanded','true');
+    root.classList.add('dd-open');            // local lift
+    if (card) card.classList.add('dd-raise'); // raise whole card above Tech/Events
+    place();
+    menu.style.position = 'absolute';
+    menu.style.left = '0';
+    menu.style.minWidth = '240px';
+  }
+
+  function closeMenu(){
+    menu.classList.add('hidden');
+    btn.setAttribute('aria-expanded','false');
+    root.classList.remove('dd-open');
+    if (card) card.classList.remove('dd-raise');
+  
+  }
+
+  btn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    const isOpen = btn.getAttribute('aria-expanded') === 'true';
+    isOpen ? closeMenu() : openMenu();
+  });
+
+  // Close on outside click / ESC / section change
+  document.addEventListener('click', (e)=>{
+    if (!menu.classList.contains('hidden') && !root.contains(e.target)) closeMenu();
+  });
+  document.addEventListener('keydown', (e)=>{ if (e.key === 'Escape') closeMenu(); });
+  window.addEventListener('hashchange', closeMenu);
+})();
+</script>
+<script>
 (function () {
   const toggle = document.getElementById("nav-toggle");
   const tray   = document.getElementById("nav-mobile");
   if (!toggle || !tray) return;
 
-  toggle.addEventListener("click", () => tray.classList.toggle("hidden"));
+  function setOpen(open){
+    tray.classList.toggle("hidden", !open);
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+
+  toggle.addEventListener("click", () => {
+    const open = tray.classList.contains("hidden");
+    setOpen(open);
+  });
+
+  // close tray when a nav link in the tray is tapped
   tray.addEventListener("click", (e) => {
     const btn = e.target.closest("[data-nav]");
-    if (btn) tray.classList.add("hidden");
+    if (btn) setOpen(false);
   });
 })();
 </script>
+
 </body>
 </html>
