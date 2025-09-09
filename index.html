@@ -103,26 +103,6 @@ textarea:focus, textarea:focus-visible{
 #meals-dd > button[aria-expanded="true"] svg {
   transform: rotate(180deg);
 }
-  /* Force wide 3-up layout for Food → How it works */
-  #food-how .grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 1.5rem !important; /* 24px */
-    align-items: stretch !important;
-  }
-#food-how .rounded-2xl.border-yellow-200.bg-white {
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: flex-start !important;
-  /* add this for safety */
-  min-width: 0 !important;
-}
-  /* Keep mobile stacked */
-  @media (max-width: 767.98px) {
-    #food-how .grid {
-      grid-template-columns: 1fr !important;
-    }
-  }
 </style>
 
 </head>
@@ -205,7 +185,7 @@ textarea:focus, textarea:focus-visible{
 </p>
 
 <!-- Proof mini-cards -->
-<div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-5xl mx-auto">
+<div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-5xl mx-auto">
   <div class="bg-white rounded-xl border border-gray-200 p-5 text-center shadow-sm">
     <div class="text-sm font-semibold text-gray-900">Reliable</div>
     <p class="mt-1 text-sm text-gray-600">Predictable ops, clear SOPs, weekly cadence.</p>
@@ -221,36 +201,39 @@ textarea:focus, textarea:focus-visible{
 </div>
 
     <!-- Hub cards: choose a vertical (single row on desktop) -->
-    <div id="verticals" class="mt-10 md:mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+    <div id="verticals" class="mt-8 md:mt-8 grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-4 lg:gap-5">
 
       <!-- Meals -->
-<div class="card p-6 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
+<div class="card p-5 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
         <h3 class="text-xl font-extrabold text-gray-900 mb-1">Meals</h3>
         <p class="text-sm text-gray-700 mb-4">Curated daily lunchboxes built with local partner kitchens.</p>
 
       <div class="relative" id="meals-dd">
-  <button type="button"
-          class="px-5 py-2.5 rounded-xl font-semibold shadow-md btn-meals"
-          aria-haspopup="true" aria-expanded="false" aria-controls="meals-menu">
-    Go to Meals
-    <svg class="h-4 w-4 opacity-90" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-      <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"/>
-    </svg>
-  </button>
+  <div class="inline-flex align-middle">
+    <button data-nav="food"
+            class="px-5 py-2.5 font-semibold shadow-md btn-meals rounded-l-xl rounded-r-none">Go to Meals</button>
+    <button type="button"
+            class="px-3 py-2.5 font-semibold shadow-md btn-meals rounded-r-xl rounded-l-none border-l border-white/30"
+            aria-haspopup="true" aria-expanded="false" aria-controls="meals-menu" title="More">
+      <svg class="h-4 w-4 opacity-90" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"/>
+      </svg>
+    </button>
+  </div>
 
   <!-- Dropdown menu -->
- <div id="meals-menu" class="dropdown hidden" role="menu" aria-label="Meals actions">
-  <button data-nav="restaurant-partners" role="menuitem">Partner with Us</button>
-  <a href="https://fuelupmeals.ca" target="_blank" rel="noopener" role="menuitem">
-    Order Lunchboxes <span class="hint">LIVE</span>
-  </a>
-  <button class="disabled" type="button" role="menuitem">Breakfast &amp; Dinner <span class="soon">SOON</span></button>
-  <button data-nav="food" role="menuitem">FuelUp Kitchen</button>
-</div>
+  <div id="meals-menu" class="dropdown hidden" role="menu" aria-label="Meals actions">
+    <button data-nav="restaurant-partners" role="menuitem">Partner with Us</button>
+    <a href="https://fuelupmeals.ca" target="_blank" rel="noopener" role="menuitem">
+      Order Lunchboxes <span class="hint">LIVE</span>
+    </a>
+    <button class="disabled" type="button" role="menuitem">Breakfast &amp; Dinner <span class="soon">SOON</span></button>
+    <button data-nav="fuelup-kitchen" role="menuitem">FuelUp Kitchen</button>
+  </div>
 </div>
 </div>
       <!-- Tech -->
-      <div class="card p-6 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
+      <div class="card p-5 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
         <h3 class="text-xl font-extrabold text-gray-900 mb-1">Tech</h3>
         <p class="text-sm text-gray-700 mb-5">AI driven Creative content design and digital solutions.</p>
        <button data-nav="tech"
@@ -260,7 +243,7 @@ textarea:focus, textarea:focus-visible{
       </div>
     
         <!-- Events -->
-      <div class="card p-6 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
+      <div class="card p-5 relative overflow-visible transition transform hover:-translate-y-0.5 hover:shadow-lg">
         <h3 class="text-xl font-extrabold text-gray-900 mb-1">Events</h3>
         <p class="text-sm text-gray-700 mb-5">Local community events, pop-ups, and brand activations.</p>
         <button data-nav="events"
@@ -274,11 +257,11 @@ textarea:focus, textarea:focus-visible{
 </section>
 
   <!-- FOOD -->
- <section id="food" class="py-16 md:py-20" style="background-color:#fffdfa">
+ <section id="food" class="py-16 md:py-16" style="background-color:#fffdfa">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
     <!-- Eyebrow + Title -->
-    <div class="max-w-3xl mb-10">
+    <div class="max-w-3xl mb-8">
       <div class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-[11px] font-semibold border border-gray-200 shadow-sm">
         <span class="inline-block h-2 w-2 rounded-full bg-red-600"></span>
         FuelUp · Food
@@ -293,15 +276,15 @@ textarea:focus, textarea:focus-visible{
     </div>
 
     <!-- Three premium tiles -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-4">
 
       <!-- FuelUp Lunchboxes (consumer) -->
-      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition">
-        <div class="p-6">
+      <div class="group bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition h-full flex flex-col">
+        <div class="p-4 flex-1">
           <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
             Customer App
           </div>
-          <h3 class="text-xl font-extrabold text-gray-900">FuelUp Lunchboxes</h3>
+          <h3 class="text-2xl font-extrabold text-gray-900">FuelUp Lunchboxes</h3>
           <p class="mt-2 text-gray-700 text-sm">
             Pre-sold weekday lunch plans (3, 5, 10, 22). FuelUp-standard boxes, kitimat-focused delivery.
           </p>
@@ -310,7 +293,7 @@ textarea:focus, textarea:focus-visible{
             <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Pass-based</span>
           </div>
         </div>
-        <div class="px-6 pb-6">
+        <div class="px-4 pb-4">
          <a href="https://fuelupmeals.ca" target="_blank" rel="noopener"
    class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient">
   View Customer Site
@@ -320,12 +303,12 @@ textarea:focus, textarea:focus-visible{
 
       <!-- Restaurant Partners (onboarding) — gradient frame -->
 <div class="group rounded-2xl p-[1px] shadow-sm hover:shadow-md transition grad-frame">
-  <div class="bg-white rounded-2xl">
-    <div class="p-6">
+  <div class="bg-white rounded-2xl h-full flex flex-col">
+    <div class="p-4 flex-1">
       <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
         For Restaurants
       </div>
-      <h3 class="text-xl font-extrabold text-gray-900">Restaurant Partners (Lunchboxes)</h3>
+      <h3 class="text-2xl font-extrabold text-gray-900">Restaurant Partners (Lunchboxes)</h3>
       <p class="mt-2 text-gray-700 text-sm">
         Join as a fulfillment partner. We assign 3–5 boxes from your menu, do pickups, and pay weekly.
       </p>
@@ -334,7 +317,7 @@ textarea:focus, textarea:focus-visible{
         <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">Weekly payouts</span>
       </div>
     </div>
-    <div class="px-6 pb-6">
+    <div class="px-4 pb-4">
       <button data-nav="restaurant-partners"
               class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300 btn-gradient">
         Restaurant Onboarding
@@ -345,12 +328,12 @@ textarea:focus, textarea:focus-visible{
 
      <!-- FuelUp Kitchen — gradient frame (light) -->
 <div class="group rounded-2xl p-[1px] shadow-sm hover:shadow-md transition grad-frame">
-  <div class="bg-white rounded-2xl">
-    <div class="p-6">
+  <div class="bg-white rounded-2xl h-full flex flex-col">
+    <div class="p-4 flex-1">
       <div class="mb-3 inline-flex items-center rounded-full bg-[#fdf6ec] px-3 py-1 text-xs font-semibold text-red-700 border border-red-200">
         Operations
       </div>
-      <h3 class="text-xl font-extrabold text-gray-900">FuelUp Kitchen</h3>
+      <h3 class="text-2xl font-extrabold text-gray-900">FuelUp Kitchen</h3>
       <p class="mt-2 text-gray-700 text-sm">
         Cloud-kitchen collaboration and standardized prep. SOPs, labeling, and QA for consistent output.
       </p>
@@ -359,56 +342,49 @@ textarea:focus, textarea:focus-visible{
         <span class="px-3 py-1 rounded-full text-xs bg-white border border-gray-200">SOP-driven</span>
       </div>
     </div>
-    <div class="px-6 pb-6">
-      <a href="#"
-         class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300">
+    <div class="px-4 pb-4">
+      <button data-nav="fuelup-kitchen"
+              class="inline-flex items-center gap-2 px-5 py-2 rounded-xl font-semibold text-gray-900 border border-gray-300 bg-white hover:bg-gray-50 transition focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300">
         Learn More
-      </a>
+      </button>
     </div>
   </div>
 </div>
  <!-- Food · How it works (TEST)-->
-<div id="food-how" class="mt-12 md:mt-16">
+<div id="food-how" class="mt-12 md:mt-12">
  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="rounded-2xl border border-gray-200 p-6 md:p-8" style="background-color:#fff6ea">
+    <div class="rounded-2xl border border-gray-200 p-5 md:p-6" style="background-color:#fff6ea">
       <h3 class="text-2xl font-extrabold text-gray-900 mb-6 text-center">How FuelUp Food Works</h3>
 
-      <!-- 1 column on mobile, 3 columns on desktop -->
-     <div class="mt-6 grid grid-cols-1 md:grid-cols-1 gap-6 items-stretch">
+      <ol class="mt-6 space-y-4">
         <!-- 1 -->
-<div class="rounded-2xl border border-yellow-200 bg-white p-6 text-center shadow-sm flex flex-col flex-1 min-w-0">
-          <div class="mx-auto mb-3 h-10 w-10 rounded-full flex items-center justify-center"
-               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">
-            <span class="font-extrabold text-white">1</span>
+        <li class="flex items-start gap-4 p-5 bg-white rounded-xl border border-yellow-200 shadow-sm">
+          <div class="h-10 w-10 rounded-full flex items-center justify-center text-white font-extrabold"
+               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">1</div>
+          <div class="min-w-0">
+            <div class="font-semibold text-gray-900">Standardize</div>
+            <p class="mt-1 text-sm text-gray-700">We define FuelUp‑style boxes and SOPs for consistency.</p>
           </div>
-          <div class="font-semibold text-gray-900">Standardize</div>
-          <p class="mt-2 text-sm text-gray-700">
-            We define FuelUp-style boxes and SOPs for consistency.
-          </p>
-        </div>
+        </li>
         <!-- 2 -->
-<div class="rounded-2xl border border-yellow-200 bg-white p-6 text-center shadow-sm flex flex-col flex-1 min-w-0">
-          <div class="mx-auto mb-3 h-10 w-10 rounded-full flex items-center justify-center"
-               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">
-            <span class="font-extrabold text-white">2</span>
+        <li class="flex items-start gap-4 p-5 bg-white rounded-xl border border-yellow-200 shadow-sm">
+          <div class="h-10 w-10 rounded-full flex items-center justify-center text-white font-extrabold"
+               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">2</div>
+          <div class="min-w-0">
+            <div class="font-semibold text-gray-900">Pre‑Sell</div>
+            <p class="mt-1 text-sm text-gray-700">Customers buy passes; we schedule weekday orders.</p>
           </div>
-          <div class="font-semibold text-gray-900">Pre-Sell</div>
-          <p class="mt-2 text-sm text-gray-700">
-            Customers buy passes; we schedule weekday orders.
-          </p>
-        </div>
+        </li>
         <!-- 3 -->
-<div class="rounded-2xl border border-yellow-200 bg-white p-6 text-center shadow-sm flex flex-col flex-1 min-w-0">
-          <div class="mx-auto mb-3 h-10 w-10 rounded-full flex items-center justify-center"
-               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">
-            <span class="font-extrabold text-white">3</span>
+        <li class="flex items-start gap-4 p-5 bg-white rounded-xl border border-yellow-200 shadow-sm">
+          <div class="h-10 w-10 rounded-full flex items-center justify-center text-white font-extrabold"
+               style="background-image:linear-gradient(135deg,#f97316 0%, #fde047 100%);">3</div>
+          <div class="min-w-0">
+            <div class="font-semibold text-gray-900">Fulfill</div>
+            <p class="mt-1 text-sm text-gray-700">Restaurants prep; FuelUp handles pickups & service.</p>
           </div>
-          <div class="font-semibold text-gray-900">Fulfill</div>
-          <p class="mt-2 text-sm text-gray-700">
-            Restaurants prep; FuelUp handles pickups & service.
-          </p>
-        </div>
-      </div> <!-- /grid -->
+        </li>
+      </ol>
     </div>   <!-- /rounded container -->
   </div>     <!-- /max-w wrapper -->
 </div>       <!-- /food-how -->
@@ -419,43 +395,50 @@ textarea:focus, textarea:focus-visible{
   <section id="restaurant-partners" class="min-h-screen hidden-section">
     <!-- Hero: responsive layout with background logo on mobile and column image on larger screens -->
     <section id="restaurant-partners-hero"
-             class="py-14 md:py-20 relative"
+             class="py-14 md:py-16 relative"
              style="background-color:#fdf6ec;">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Side-by-side layout at ALL sizes: logo left, text right -->
-<div class="grid grid-cols-2 items-center gap-4 sm:gap-8">
-  <!-- Left: centered logo, large and responsive -->
-  <div class="flex items-center justify-center">
-    <img src="lunchboxes-logo.png" alt="FuelUp Lunchboxes"
-         class="h-28 sm:h-36 md:h-44 lg:h-52 xl:h-56 w-auto" />
-  </div>
+<div class="rounded-2xl bg-white border border-gray-200 shadow-sm p-4 sm:p-5 md:p-6">
+<div class="grid grid-cols-2 items-center gap-3 sm:gap-4 md:gap-4">
+    <!-- Left: BIG centered logo -->
+    <div class="flex items-center justify-center">
+      <img src="lunchboxes-logo.png" alt="FuelUp Lunchboxes"
+           class="h-[17rem] sm:h-[18rem] md:h-[19rem] lg:h-[20rem] xl:h-[22rem] w-auto" />
+    </div>
 
-  <!-- Right: heading + copy + CTAs on a translucent layer -->
-  <div class="bg-white/70 p-4 sm:p-6 rounded-xl">
-    <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">
-      Partner with <span class="text-red-600">FuelUp Meals</span>
-    </h1>
-    <p class="text-base sm:text-lg text-gray-800 mt-3 sm:mt-4">
-      We bring you <span class="font-semibold text-red-600">guaranteed weekday meal orders</span>,
-      <span class="font-semibold text-yellow-500">predictable weekly payouts</span>,
-      and <span class="font-semibold">zero upfront cost</span>. Keep running your kitchen as usual — we handle pre‑sales, logistics, and customer support.
-    </p>
-    <div class="flex flex-wrap gap-3 mt-5 sm:mt-6">
-      <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
-              class="px-6 sm:px-7 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
-              style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-        Join as a Restaurant Partner
-      </button>
-      <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})"
-              class="border border-gray-300 bg-white/80 backdrop-blur-[1px] text-gray-800 px-6 sm:px-7 py-3 rounded-xl font-semibold hover:bg-white transition">
-        How it Works
-      </button>
+    <!-- Right: heading + copy + CTAs on the same card background -->
+    <div>
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">
+        Partner with <span class="text-red-600">FuelUp Meals</span>
+      </h1>
+      <p class="text-base sm:text-lg text-gray-800 mt-3 sm:mt-4">
+        We bring you <span class="font-semibold text-red-600">guaranteed weekday meal orders</span>,
+        <span class="font-semibold text-yellow-500">predictable weekly payouts</span>,
+        and <span class="font-semibold">zero upfront cost</span>. Keep running your kitchen as usual — we handle pre‑sales, logistics, and customer support.
+      </p>
+      <div class="flex flex-wrap gap-3 mt-5 sm:mt-6">
+        <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
+                class="px-6 sm:px-7 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
+                style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+          Join as a Restaurant Partner
+        </button>
+        <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})"
+                class="border border-gray-300 bg-white text-gray-800 px-6 sm:px-7 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+          How it Works
+        </button>
+        <button data-nav="food"
+                class="border border-gray-300 bg-white text-gray-800 px-6 sm:px-7 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+          Back to Food
+        </button>
+      </div>
     </div>
   </div>
 </div>
+  <!-- three small cards (unchanged) -->
 
 <!-- three small cards (unchanged) -->
-        <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
             <h4 class="font-semibold text-red-600 mb-1">No Upfront Cost</h4>
             <p class="text-sm text-gray-700">You pay nothing to start.</p>
@@ -498,15 +481,8 @@ textarea:focus, textarea:focus-visible{
               <span>Keep your own brand for dine-in; fulfill FuelUp boxes for lunch</span>
             </li>
           </ul>
-          <div class="mt-6">
-            <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
-                    class="px-6 py-2.5 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
-                    style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-              Apply now
-            </button>
-          </div>
         </div>
-        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-3">
           <div class="bg-white rounded-xl border border-yellow-200 p-5">
             <h4 class="font-semibold text-gray-900 mb-1"><span class="text-red-600">Predictable</span></h4>
             <p class="text-sm text-gray-700">We pre-sell via passes, so your counts are clear and stable.</p>
@@ -524,7 +500,7 @@ textarea:focus, textarea:focus-visible{
     </section>
     
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
 
   <!-- What You Get -->
   <div class="p-8 rounded-xl shadow-sm border border-gray-100" style="background-color:#fdf6ec">
@@ -606,7 +582,7 @@ textarea:focus, textarea:focus-visible{
       <div id="how-it-works" class="p-8 rounded-xl shadow-sm border border-gray-100 mb-16" style="background-color:#fdf6ec">
   <h3 class="text-3xl font-extrabold text-gray-900 mb-8 text-center">How It Works</h3>
 
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
     <!-- 1 -->
     <div class="text-center p-6 bg-white rounded-xl border border-yellow-200">
       <div class="w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center font-extrabold text-white"
@@ -648,14 +624,6 @@ textarea:focus, textarea:focus-visible{
     </div>
   </div>
 
-  <!-- mini CTA under steps -->
-  <div class="text-center mt-10">
-    <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
-            class="px-8 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
-            style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-      Start Application
-    </button>
-  </div>
 </div>
       <!-- Application Form -->
       <div id="apply-form" class="p-8 rounded-xl shadow-sm border border-gray-100" style="background-color:#fdf6ec">
@@ -783,6 +751,30 @@ textarea:focus, textarea:focus-visible{
 
   </section>
 
+  <!-- FUELUP KITCHEN (standalone page) -->
+  <section id="fuelup-kitchen" class="min-h-screen hidden-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="rounded-2xl border border-gray-200 p-8 md:p-12 bg-white/80">
+        <h2 class="text-4xl font-extrabold text-gray-900 mb-4">FuelUp Kitchen</h2>
+        <p class="text-lg text-gray-700">Centralized prep, SOPs, labeling, and QA for consistent output.</p>
+        <div class="mt-6 inline-flex items-center gap-3 text-sm font-semibold">
+          <span class="px-3 py-1 rounded-full border border-gray-300 bg-white">Status: Coming soon</span>
+          <span class="px-3 py-1 rounded-full border border-gray-300 bg-white">Vertical</span>
+        </div>
+
+        <div class="mt-10 flex flex-wrap gap-3">
+          <button data-nav="food"
+                  class="border border-gray-300 bg-white text-gray-800 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
+            Back to Food
+          </button>
+          <button data-nav="restaurant-partners"
+                  class="px-6 py-3 rounded-xl font-semibold text-white shadow-md btn-gradient">
+            Restaurant Onboarding
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
   <!-- TECH -->
   <section id="tech" class="min-h-screen hidden-section">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -942,7 +934,7 @@ textarea:focus, textarea:focus-visible{
 </footer>
   <!-- JS: navigation + Formspree fetch + toast -->
   <script>
-    const NAV_SECTIONS = ["home","food","restaurant-partners","tech","events","about","contact"];
+    const NAV_SECTIONS = ["home","food","restaurant-partners","fuelup-kitchen","tech","events","about","contact"];
     const forms = {
       partner: { id: "partner-form", endpoint: "https://formspree.io/f/myzdnvay" },
       contactHome: { id: "contact-form", endpoint: "https://formspree.io/f/meolrwqq" },
@@ -1024,7 +1016,7 @@ textarea:focus, textarea:focus-visible{
         <script>
 // ===== Section Router =====
 (function () {
-  const SECTION_IDS = ["home","food","restaurant-partners","tech","events","about","contact"];
+  const SECTION_IDS = ["home","food","restaurant-partners","fuelup-kitchen","tech","events","about","contact"];
   const HIDDEN = "hidden-section"; // already in your CSS
   const navLinks = Array.from(document.querySelectorAll('[data-nav]'));
 
