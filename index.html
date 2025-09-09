@@ -420,42 +420,31 @@ textarea:focus, textarea:focus-visible{
     <!-- Hero: responsive layout with background logo on mobile and column image on larger screens -->
     <section id="restaurant-partners-hero"
              class="py-14 md:py-20 relative"
-             style="background-color:#fdf6ec; ">
+             style="background-color:#fdf6ec; background-image:url('lunchboxes-logo.png'); background-repeat:no-repeat; background-position:left 24px top 24px; background-size:200px;">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Badge -->
-        <div class="mb-5 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold border border-red-200 shadow-sm">
-          <span class="inline-block h-2 w-2 rounded-full bg-red-600"></span>
-          Open for New Restaurants in Kitimat
-        </div>
-        <!-- On medium and up screens, show the logo as a separate column -->
-        <div class="grid grid-cols-2 items-center gap-8">
-          <div class="flex justify-center">
-            <img src="lunchboxes-logo.png" alt="FuelUp Lunchboxes" class="h-20 sm:h-24 md:h-28 w-auto" />
-          </div>
-          <div class="md:col-span-1">
-            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">
-              Partner with <span class="text-red-600">FuelUp Meals</span>
-            </h1>
-            <p class="text-lg text-gray-800 mt-4">
-              We bring you <span class="font-semibold text-red-600">guaranteed weekday meal orders</span>,
-              <span class="font-semibold text-yellow-500"> predictable weekly payouts</span>, and
-              <span class="font-semibold"> zero upfront cost</span>. Keep running your kitchen as usual — we handle
-              pre-sales, logistics, and customer support.
-            </p>
-            <div class="flex flex-wrap gap-3 mt-6">
-              <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
-                      class="px-7 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
-                      style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
-                Join as a Restaurant Partner
-              </button>
-              <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})"
-                      class="border border-gray-300 bg-white text-gray-800 px-7 py-3 rounded-xl font-semibold hover:bg-gray-50 transition">
-                How it Works
-              </button>
-            </div>
+        <!-- Hero content offset right so BG logo stays visible -->
+        <div class="max-w-3xl md:ml-56 lg:ml-64 xl:ml-72 bg-white/70 backdrop-blur-sm p-6 rounded-xl">
+          <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900">
+            Partner with <span class="text-red-600">FuelUp Meals</span>
+          </h1>
+          <p class="text-lg text-gray-800 mt-4">
+            We bring you <span class="font-semibold text-red-600">guaranteed weekday meal orders</span>,
+            <span class="font-semibold text-yellow-500">predictable weekly payouts</span>,
+            and <span class="font-semibold">zero upfront cost</span>. Keep running your kitchen as usual — we handle pre‑sales, logistics, and customer support.
+          </p>
+          <div class="flex flex-wrap gap-3 mt-6">
+            <button onclick="document.getElementById('apply-form').scrollIntoView({behavior:'smooth'})"
+                    class="px-7 py-3 rounded-xl font-semibold text-white shadow-md focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-gray-300"
+                    style="background-image: linear-gradient(135deg,#dc2626 0%,#facc15 100%);">
+              Join as a Restaurant Partner
+            </button>
+            <button onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})"
+                    class="border border-gray-300 bg-white/80 backdrop-blur-[1px] text-gray-800 px-7 py-3 rounded-xl font-semibold hover:bg-white transition">
+              How it Works
+            </button>
           </div>
         </div>
-        <!-- Three benefit cards -->
+        <!-- three small cards (unchanged) -->
         <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-200">
             <h4 class="font-semibold text-red-600 mb-1">No Upfront Cost</h4>
