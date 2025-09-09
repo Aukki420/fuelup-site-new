@@ -430,11 +430,12 @@ textarea:focus, textarea:focus-visible{
     </div>
 
     <!-- ALWAYS two columns (mobile + desktop) -->
-    <div class="grid grid-cols-2 items-center gap-4 sm:gap-8">
+    <div class="grid grid-cols-2 items-start gap-4 sm:gap-8">
       <!-- Left: logo (visible at all sizes) -->
-      <div class="flex justify-center sm:justify-start">
+      <div class="flex justify-center sm:justify-start items-start shrink-0">
         <img src="lunchboxes-logo.png" alt="FuelUp Lunchboxes"
-             class="h-[2.8rem] sm:h-24 md:h-28 w-auto" />
+             class="h-24 sm:h-28 md:h-32 lg:h-40 xl:h-44 w-auto"
+             loading="eager" />
       </div>
 
       <!-- Right: heading + copy + CTAs -->
